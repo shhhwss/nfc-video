@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <!-- 强制跳转到视频链接 -->
-<meta http-equiv="refresh" content="0; url=https://video-1361071953.cos.ap-beijing.myqcloud.com/%E6%9E%97%E4%BF%8A%E6%9D%B0-%E3%80%8A%E8%A3%B9%E7%9D%80%E5%BF%83%E7%9A%84%E5%85%89%E3%80%8B%2Bmp3%E9%9F%B3%E4%B9%90%E6%AD%8C%E6%9B%B2%E5%85%8D%E8%B4%B9%E4%B8%8B%E8%BD%BD.mp3" />
+<meta http-equiv="refresh" content="0;https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3" />
 <title>跳转中...</title>
 <style>
 body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
@@ -11,6 +11,6 @@ a { color: #ff4757; text-decoration: none; }
 </style>
 </head>
 <body>
-<p>如果未自动跳转，<a href="https://video-1361071953.cos.ap-beijing.myqcloud.com/%E6%9E%97%E4%BF%8A%E6%9D%B0-%E3%80%8A%E8%A3%B9%E7%9D%80%E5%BF%83%E7%9A%84%E5%85%89%E3%80%8B%2Bmp3%E9%9F%B3%E4%B9%90%E6%AD%8C%E6%9B%B2%E5%85%8D%E8%B4%B9%E4%B8%8B%E8%BD%BD.mp3">点击这里</a ></p >
+<p>如果未自动跳转，<a href="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3">点击这里</a ></p >
 </body>
 </html>
