@@ -1,186 +1,66 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>音乐播放器</title>
+    <title>音乐自动播放</title>
     <style>
         body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
             margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        
-        .player-container {
-            text-align: center;
-            max-width: 90%;
-            width: 320px;
-        }
-        
-        .cover {
-            width: 200px;
-            height: 200px;
-            border-radius: 12px;
-            object-fit: cover;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
-        .cover:hover {
-            transform: scale(1.03);
-        }
-        
-        .controls {
-            margin-top: 20px;
-        }
-        
-        .play-btn {
-            background: #4e54c8;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(78, 84, 200, 0.4);
-        }
-        
-        .play-btn:hover {
-            background: #6a6fd8;
-            transform: translateY(-2px);
-        }
-        
-        .status {
-            margin-top: 15px;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .progress-container {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            margin-top: 20px;
+            padding: 0;
+            background: #000;
             overflow: hidden;
         }
-        
-        .progress-bar {
+        /* 全屏透明触发层 */
+        #trigger {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            background: #4e54c8;
-            width: 0%;
-            transition: width 0.1s;
+            opacity: 0;
+            z-index: 9999;
+        }
+        /* 隐藏的播放器 */
+        #player {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="player-container">
-        <img src="https://shhhwss.github.io/nfc-video/cover.jpg" 
-             alt="专辑封面" 
-             class="cover" 
-             id="coverArt">
-        
-        <h2 id="songTitle">音乐名称</h2>
-        <p id="artist">艺术家</p>
-        
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
-        
-        <div class="controls">
-            <button class="play-btn" id="playBtn">播放音乐</button>
-        </div>
-        
-        <p class="status" id="statusText">点击上方按钮播放音乐</p>
-    </div>
 
-    <audio id="audioPlayer" preload="auto">
-        <source src="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3" type="audio/mpeg">
-        您的浏览器不支持音频播放
-    </audio>
+<!-- 透明触发层（用户无感知点击） -->
+<div id="trigger"></div>
 
-    <script>
-        const audio = document.getElementById('audioPlayer');
-        const playBtn = document.getElementById('playBtn');
-        const coverArt = document.getElementById('coverArt');
-        const progressBar = document.getElementById('progressBar');
-        const statusText = document.getElementById('statusText');
-        
-        let isPlaying = false;
-        
-        // 统一播放控制函数
-        function togglePlayback() {
-            if (isPlaying) {
-                audio.pause();
-                playBtn.textContent = '播放音乐';
-                statusText.textContent = '音乐已暂停';
-                isPlaying = false;
-            } else {
-                audio.play()
-                    .then(() => {
-                        isPlaying = true;
-                        playBtn.textContent = '暂停音乐';
-                        statusText.textContent = '正在播放...';
-                    })
-                    .catch(error => {
-                        console.error('播放失败:', error);
-                        statusText.textContent = '播放失败: ' + error.message;
-                        
-                        // 特殊处理微信环境
-                        if (navigator.userAgent.includes('MicroMessenger')) {
-                            statusText.textContent = '播放被阻止，请点击右上角...选择"在浏览器打开"';
-                        }
-                    });
-            }
-        }
-        
-        // 多种交互方式
-        playBtn.addEventListener('click', togglePlayback);
-        coverArt.addEventListener('click', togglePlayback);
-        
-        // 进度条更新
-        audio.addEventListener('timeupdate', () => {
-            const progress = (audio.currentTime / audio.duration) * 100;
-            progressBar.style.width = `${progress}%`;
+<!-- 音乐播放器 -->
+<audio id="player" loop src="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3"></audio>
+
+<script>
+    const trigger = document.getElementById('trigger');
+    const player = document.getElementById('player');
+
+    // 页面加载后立即模拟点击
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            trigger.click(); // 自动触发透明层点击
+        }, 300);
+    });
+
+    // 绑定点击事件（实际用户点击也会触发）
+    trigger.addEventListener('click', () => {
+        player.play().catch(e => {
+            // 如果失败，显示引导提示（微信等严格环境）
+            document.body.innerHTML = `
+                <div style="color:white;padding:20px;text-align:center;">
+                    <h2>请点击下方按钮播放</h2>
+                    <button onclick="document.getElementById('player').play()" 
+                            style="padding:10px 20px;background:#4CAF50;color:white;border:none;">
+                        点击播放音乐
+                    </button>
+                </div>
+            `;
         });
-        
-        // 点击进度条跳转
-        progressBar.parentElement.addEventListener('click', (e) => {
-            const rect = e.target.getBoundingClientRect();
-            const pos = (e.clientX - rect.left) / rect.width;
-            audio.currentTime = pos * audio.duration;
-        });
-        
-        // 错误处理
-        audio.addEventListener('error', () => {
-            statusText.textContent = '加载音频失败，请检查网络连接';
-            if (audio.error) {
-                console.error('音频错误:', audio.error);
-            }
-        });
-        
-        // 音频结束
-        audio.addEventListener('ended', () => {
-            isPlaying = false;
-            playBtn.textContent = '播放音乐';
-            statusText.textContent = '播放结束';
-        });
-        
-        // 预加载提示
-        audio.addEventListener('loadeddata', () => {
-            statusText.textContent = '准备就绪，点击播放';
-        });
-    </script>
+    });
+</script>
 </body>
 </html>
