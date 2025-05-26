@@ -13,58 +13,49 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-      font-family: sans-serif;
     }
-    img {
+    #cover {
       width: 80%;
       max-width: 300px;
       border-radius: 10px;
       margin-bottom: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background: #1db954;
-      border: none;
-      border-radius: 20px;
-      color: white;
       cursor: pointer;
+    }
+    #tip {
+      color: #aaa;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
-  <!-- 音乐封面图 -->
-  <img src="https://shhhwss.github.io/nfc-video/cover.jpg" alt="封面图">
+  <!-- 封面图（点击触发播放） -->
+  <img id="cover" src="https://shhhwss.github.io/nfc-video/cover.jpg" alt="点击播放音乐">
 
-  <!-- 控制按钮 -->
-  <button id="toggleBtn">暂停</button>
+  <p id="tip">点击封面播放音乐</p>
 
-  <!-- 音乐播放器 -->
-  <audio id="myAudio" src="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3" autoplay loop></audio>
+  <!-- 音乐播放器（初始隐藏） -->
+  <audio id="myAudio" src="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3" loop></audio>
 
   <script>
     const audio = document.getElementById("myAudio");
-    const button = document.getElementById("toggleBtn");
+    const cover = document.getElementById("cover");
+    const tip = document.getElementById("tip");
 
-    // 自动播放尝试
-    window.addEventListener("load", () => {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise
-          。then(() => console.log("音乐已自动播放"))
-          。catch((err) => console.log("自动播放失败：", err));
-      }
-    });
+    let isPlaying = false;
 
-    // 用户点击切换播放状态
-    button.addEventListener("click", () => {
-      if (audio.paused) {
-        audio.play();
-        button.textContent = "暂停";
+    cover.addEventListener("click", () => {
+      if (!isPlaying) {
+        audio.play().then(() => {
+          isPlaying = true;
+          tip.textContent = "点击封面暂停音乐";
+        }).catch(err => {
+          tip.textContent = "播放失败，请点击重试";
+        });
       } else {
         audio.pause();
-        button.textContent = "播放";
+        isPlaying = false;
+        tip.textContent = "点击封面播放音乐";
       }
     });
   </script>
