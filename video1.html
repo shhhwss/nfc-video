@@ -1,54 +1,196 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>视频播放</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>视频播放器</title>
   <style>
     body {
       margin: 0;
+      padding: 0;
       background: #000;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+    .video-container {
+      width: 100%;
+      max-width: 800px;
+      position: relative;
     }
     video {
       width: 100%;
+      height: auto;
       max-height: 100vh;
-      background-color: #000;
+      display: block;
+    }
+    .controls {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      padding: 20px 0 10px;
+    }
+    .video-container:hover .controls {
+      opacity: 1;
+    }
+    button {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      margin: 0 5px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      min-width: 60px;
+      backdrop-filter: blur(5px);
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      background: rgba(0,0,0,0.5);
+      padding: 10px 20px;
+      border-radius: 20px;
+    }
+    .volume-control {
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+    }
+    input[type="range"] {
+      width: 80px;
+      margin: 0 10px;
     }
   </style>
 </head>
 <body>
-    <source src="https://video-1361071953.cos.ap-beijing.myqcloud.com/1.MP4" type="video/mp4">
-    您的浏览器不支持 HTML5 视频播放。
-  </video>
+  <div class="video-container">
+    <video id="myVideo" playsinline>
+      <source src="https://video-1361071953.cos.ap-beijing.myqcloud.com/1.MP4" type="video/mp4">
+      您的浏览器不支持 HTML5 视频播放。
+    </video>
+    <div class="controls">
+      <button id="playBtn">播放</button>
+      <div class="volume-control">
+        <button id="muteBtn">音量</button>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="1">
+      </div>
+    </div>
+    <div class="loading" id="loadingText">视频加载中...</div>
+  </div>
 
   <script>
     const video = document.getElementById("myVideo");
+    const playBtn = document.getElementById("playBtn");
+    const muteBtn = document.getElementById("muteBtn");
+    const volumeSlider = document.getElementById("volumeSlider");
+    const loadingText = document.getElementById("loadingText");
 
-    // 自动尝试播放
-    window.addEventListener("load", () => {
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise
-          。then(() => {
-            console.log("已自动播放");
-          })
-          。catch((error) => {
-            console.log("自动播放失败：", error);
-          });
-      }
+    // 初始化音量（取消静音）
+    video.volume = 1;
+    video.muted = false;
+
+    // 视频加载状态
+    video.addEventListener('waiting', () => {
+      loadingText.style.display = 'block';
+    });
+    
+    video.addEventListener('canplay', () => {
+      loadingText.style.display = 'none';
     });
 
-    // 用户可以自由控制暂停
-    video.addEventListener("click", () => {
+    // 播放/暂停控制
+    function togglePlayback() {
       if (video.paused) {
-        video.play();
+        video.play()
+          .then(() => {
+            playBtn.textContent = '暂停';
+          })
+          .catch(error => {
+            console.error("播放失败:", error);
+            // 在iOS等设备上可能需要用户手势
+            playBtn.textContent = '点击播放';
+          });
       } else {
         video.pause();
+        playBtn.textContent = '播放';
       }
+    }
+
+    playBtn.addEventListener('click', togglePlayback);
+
+    // 音量控制
+    volumeSlider.addEventListener('input', () => {
+      video.volume = volumeSlider.value;
+      video.muted = (video.volume === 0);
+      updateMuteButton();
     });
+
+    function toggleMute() {
+      video.muted = !video.muted;
+      if (!video.muted && video.volume === 0) {
+        video.volume = 0.5;
+        volumeSlider.value = 0.5;
+      }
+      updateMuteButton();
+    }
+
+    function updateMuteButton() {
+      muteBtn.textContent = video.muted || video.volume === 0 ? '静音' : '音量';
+      if (video.muted) {
+        volumeSlider.value = 0;
+      }
+    }
+
+    muteBtn.addEventListener('click', toggleMute);
+
+    // 点击视频控制播放/暂停
+    video.addEventListener('click', togglePlayback);
+
+    // 自动尝试播放（带用户交互检测）
+    function attemptAutoPlay() {
+      video.play()
+        。then(() => {
+          playBtn.textContent = '暂停';
+        })
+        。catch(error => {
+          console.log("自动播放需要用户交互:", error);
+        });
+    }
+
+    // 通过用户交互解锁
+    document.addEventListener('click', function initPlay() {
+      attemptAutoPlay();
+      // 只执行一次
+      document.removeEventListener('click', initPlay);
+    }, { once: true });
+
+    // 更新按钮状态
+    video.addEventListener('play', () => {
+      playBtn.textContent = '暂停';
+    });
+    
+    video.addEventListener('pause', () => {
+      playBtn.textContent = '播放';
+    });
+    
+    video.addEventListener('volumechange', updateMuteButton);
   </script>
 </body>
 </html>
