@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NFC音乐播放</title>
     <style>
-        /* 白色背景简洁风格 */
         body {
             margin: 0;
             padding: 20px;
-            background: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: white;
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -18,232 +17,88 @@
             height: 100vh;
             text-align: center;
         }
-
-        /* 封面图片容器 */
-        #cover-container {
-            position: relative;
-            width: 80vw;
-            max-width: 300px;
-            height: 80vw;
-            max-height: 300px;
-            margin-bottom: 25px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            background: #f5f5f5; /* 加载背景色 */
-        }
-
-        /* 封面图片 */
         #cover {
-            width: 100%;
-            height: 100%;
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
             object-fit: cover;
-            transition: opacity 0.5s;
-            opacity: 0; /* 初始隐藏，加载后显示 */
+            margin-bottom: 25px;
+            border: 1px solid #eee;
         }
-
-        /* 加载动画 */
-        .loading-animation {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, #f5f5f5 25%, #e0e0e0 50%, #f5f5f5 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* 播放按钮 */
         #play-btn {
             background: #1DB954;
             color: white;
             border: none;
-            padding: 14px 36px;
-            font-size: 18px;
+            padding: 12px 30px;
+            font-size: 16px;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: all 0.2s;
             margin-bottom: 15px;
-            min-width: 120px;
         }
-
-        #play-btn:active {
-            transform: scale(0.96);
-        }
-
-        /* 状态提示 */
         #status {
             color: #666;
             font-size: 14px;
-            margin-top: 10px;
-            min-height: 20px;
-        }
-
-        /* 错误提示 */
-        .error-message {
-            color: #ff3333;
-            font-size: 13px;
-            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <!-- 封面图片容器 -->
-    <div id="cover-container">
-        <div class="loading-animation"></div>
-        <img id="cover" 
-             alt="音乐封面"
-             crossorigin="anonymous"
-             onload="coverLoaded()"
-             onerror="coverError()">
-    </div>
-    
-    <!-- 播放控制 -->
+    <img id="cover" src="https://shhhwss.github.io/nfc-video/cover.jpg" alt="音乐封面">
     <button id="play-btn">播放</button>
-    <div id="status">准备中...</div>
-    <div id="error" class="error-message"></div>
-    
-    <!-- 音频元素 -->
-    <audio id="audio" preload="auto" crossorigin="anonymous">
+    <div id="status">准备播放</div>
+
+    <!-- 关键修复：使用正确的音频元素 -->
+    <audio id="audio" preload="auto">
         <source src="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        // 获取DOM元素
+        // 获取元素
         const audio = document.getElementById('audio');
         const playBtn = document.getElementById('play-btn');
         const statusEl = document.getElementById('status');
-        const errorEl = document.getElementById('error');
-        const cover = document.getElementById('cover');
-        const coverContainer = document.querySelector('#cover-container');
-        const loadingAnim = document.querySelector('.loading-animation');
-
-        // 图片CDN源（多个备用源）
-        const imageSources = [
-            'https://fastly.jsdelivr.net/gh/shhhwss/nfc-video@main/1746717220752.jpeg',
-            'https://cdn.jsdelivr.net/gh/shhhwss/nfc-video@main/1746717220752.jpeg',
-            'https://raw.githubusercontent.com/shhhwss/nfc-video/main/1746717220752.jpeg'
-        ];
-
-        // 当前使用的图片源索引
-        let currentImageSource = 0;
-
-        /* 图片加载处理 */
-        // 加载封面图片
-        function loadCoverImage() {
-            cover.src = imageSources[currentImageSource];
-        }
-
-        // 图片加载成功
-        function coverLoaded() {
-            loadingAnim.style.display = 'none';
-            cover.style.opacity = '1';
-            statusEl.textContent = '准备播放';
-        }
-
-        // 图片加载失败
-        function coverError() {
-            if (currentImageSource < imageSources.length - 1) {
-                // 尝试下一个源
-                currentImageSource++;
-                loadCoverImage();
-            } else {
-                // 所有源都失败，显示占位图
-                showPlaceholder();
-            }
-        }
-
-        // 显示占位图
-        function showPlaceholder() {
-            loadingAnim.style.display = 'none';
-            coverContainer.innerHTML = `
-                <svg width="100%" height="100%" viewBox="0 0 24 24" fill="#ccc">
-                    <rect width="24" height="24" fill="#f5f5f5"/>
-                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
-                    <path d="M12 10c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-2.2 0-4 1.8-4 4h8c0-2.2-1.8-4-4-4z"/>
-                </svg>
-            `;
-            errorEl.textContent = '封面加载失败';
-        }
-
-        /* 音频控制 */
-        // 播放/暂停
+        
+        // 确保音频已加载
+        audio.load();
+        
+        // 播放/暂停控制
         function togglePlayback() {
             if (audio.paused) {
                 audio.play()
                     .then(() => {
                         playBtn.textContent = '暂停';
                         statusEl.textContent = '正在播放...';
-                        errorEl.textContent = '';
                     })
-                    .catch(handleAudioError);
+                    .catch(error => {
+                        statusEl.textContent = '播放失败，请重试';
+                        console.error('播放错误:', error);
+                    });
             } else {
                 audio.pause();
                 playBtn.textContent = '播放';
                 statusEl.textContent = '已暂停';
             }
         }
-
-        // 音频错误处理
-        function handleAudioError(error) {
-            console.error('播放错误:', error);
-            playBtn.textContent = '播放';
-            statusEl.textContent = '播放失败';
-            
-            // 特殊环境提示
-            if (/MicroMessenger/i.test(navigator.userAgent)) {
-                errorEl.innerHTML = '请点击右上角...<br>选择"在浏览器打开"';
-            } else if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                errorEl.textContent = '请先点击页面任意位置激活';
-            } else {
-                errorEl.textContent = '请检查网络连接后重试';
-            }
-        }
-
-        /* 初始化 */
-        function init() {
-            // 加载封面图片
-            loadCoverImage();
-            
-            // 绑定播放按钮事件
-            playBtn.addEventListener('click', togglePlayback);
-            
-            // 首次交互解锁音频（iOS必需）
-            document.addEventListener('click', initAudio, { once: true });
-            document.addEventListener('touchstart', initAudio, { once: true });
-            
-            // 音频状态监听
-            audio.addEventListener('playing', () => {
-                statusEl.textContent = '正在播放...';
-            });
-            
-            audio.addEventListener('error', () => {
-                handleAudioError(audio.error);
-            });
-        }
-
-        // 初始化音频上下文
-        function initAudio() {
-            // 尝试静音播放解锁
+        
+        // 绑定点击事件
+        playBtn.addEventListener('click', togglePlayback);
+        
+        // iOS特殊处理
+        document.addEventListener('touchstart', function init() {
+            // 解锁音频上下文
             audio.volume = 0;
-            audio.play()
-                。then(() => {
-                    audio.pause();
-                    audio.volume = 1;
-                    statusEl.textContent = '可以播放了';
-                })
-                。catch(e => {});
-        }
-
-        // 启动初始化
-        window.addEventListener('DOMContentLoaded', init);
+            audio.play().then(() => {
+                audio.pause();
+                audio.volume = 1;
+            }).catch(e => {});
+            
+            // 只执行一次
+            document.removeEventListener('touchstart', init);
+        }, { once: true });
+        
+        // 图片加载失败处理
+        document.getElementById('cover').onerror = function() {
+            this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTVlNWU1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSI+5Zu+54mH5Zyw5Z2APC90ZXh0Pjwvc3ZnPg==';
+        };
     </script>
 </body>
 </html>
