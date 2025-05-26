@@ -2,264 +2,85 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NFC音乐播放</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
             background: #121212;
             color: white;
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            overflow: hidden;
-            touch-action: manipulation;
-        }
-        #player-container {
-            width: 90%;
-            max-width: 400px;
             text-align: center;
-            position: relative;
         }
         #cover {
-            width: 100%;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            opacity: 0;
-            transition: opacity 0.8s ease, transform 0.3s ease;
-            margin-bottom: 20px;
-            display: block;
-        }
-        #cover.loaded {
-            opacity: 1;
-        }
-        #cover:active {
-            transform: scale(0.98);
-        }
-        #status {
-            margin-top: 15px;
-            color: rgba(255,255,255,0.7);
-            font-size: 14px;
-            min-height: 20px;
-        }
-        #progress-container {
-            width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 2px;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-        #progress-bar {
-            height: 100%;
-            width: 0%;
-            background: #1DB954;
-            transition: width 0.1s linear;
+            width: 80%;
+            max-width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
         }
         #play-btn {
             background: #1DB954;
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 15px 30px;
+            font-size: 18px;
             border-radius: 50px;
-            font-size: 16px;
-            margin-top: 20px;
             cursor: pointer;
-            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
+        #play-btn:hover {
+            background: #1ED760;
         }
         #play-btn:active {
             transform: scale(0.95);
         }
-        .hidden {
-            display: none !important;
-        }
-        #fallback-btn {
-            background: #1DB954;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-size: 16px;
-            margin-top: 20px;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-        #fallback-btn.show {
-            opacity: 1;
-        }
     </style>
 </head>
 <body>
-    <div id="player-container">
-        <!-- 封面图片 -->
-        <img id="cover" 
-             src="https://cdn.jsdelivr.net/gh/shhhwss/nfc-video@main/1746717220752.jpeg" 
-             alt="音乐封面"
-             crossorigin="anonymous">
-        
-        <!-- 进度条 -->
-        <div id="progress-container">
-            <div id="progress-bar"></div>
-        </div>
-        
-        <!-- 状态提示 -->
-        <div id="status">准备播放中...</div>
-        
-        <!-- 主播放按钮 -->
-        <button id="play-btn">播放音乐</button>
-        
-        <!-- 备用按钮 -->
-        <button id="fallback-btn" class="hidden">点击播放</button>
-    </div>
+    <!-- 封面图片（使用您原来的图片） -->
+    <img id="cover" src="https://raw.githubusercontent.com/shhhwss/nfc-video/main/1746717220752.jpeg" alt="音乐封面">
+    
+    <!-- 播放按钮 -->
+    <button id="play-btn">播放</button>
 
-    <!-- 音频元素 -->
-    <audio id="audio" 
-           preload="auto" 
-           src="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3"
-           crossorigin="anonymous"></audio>
-
-    <!-- 透明触发层 -->
-    <div id="trigger-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;opacity:0;z-index:999;"></div>
+    <!-- 音频元素（使用您原来的MP3） -->
+    <audio id="audio" src="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3"></audio>
 
     <script>
-        // DOM元素
+        // 获取DOM元素
         const audio = document.getElementById('audio');
-        const cover = document.getElementById('cover');
-        const statusEl = document.getElementById('status');
-        const progressBar = document.getElementById('progress-bar');
         const playBtn = document.getElementById('play-btn');
-        const fallbackBtn = document.getElementById('fallback-btn');
-        const triggerOverlay = document.getElementById('trigger-overlay');
-        
-        // 播放状态
-        let isPlaying = false;
-        let hasInteracted = false;
-        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
-        
-        // 初始化
-        function init() {
-            // 封面加载处理
-            cover.onload = () => {
-                cover.classList.add('loaded');
-                statusEl.textContent = '准备就绪';
-            };
-            
-            cover.onerror = () => {
-                statusEl.textContent = '封面加载失败';
-                cover.style.display = 'none';
-            };
-            
-            // 音频事件监听
-            audio.addEventListener('loadeddata', () => {
-                statusEl.textContent = '准备播放...';
-            });
-            
-            audio.addEventListener('timeupdate', updateProgress);
-            audio.addEventListener('ended', () => {
-                isPlaying = false;
-                statusEl.textContent = '播放结束';
-                playBtn.textContent = '重新播放';
-            });
-            
-            audio.addEventListener('error', handleAudioError);
-            
-            // 按钮事件
-            playBtn.addEventListener('click', togglePlayback);
-            fallbackBtn.addEventListener('click', () => {
-                audio.play().then(() => {
-                    isPlaying = true;
-                    statusEl.textContent = '正在播放...';
-                    fallbackBtn.classList.add('hidden');
-                }).catch(handleAudioError);
-            });
-            
-            // 透明层点击
-            triggerOverlay.addEventListener('click', attemptAutoPlay);
-            
-            // iOS特殊处理
-            if (isIOS) {
-                document.addEventListener('touchstart', handleFirstTouch, { once: true });
-                playBtn.style.display = 'block'; // 确保按钮可见
-            } else {
-                // 安卓尝试自动播放
-                setTimeout(attemptAutoPlay, 800);
-            }
-            
-            // 微信环境提示
-            if (isWeChat) {
-                statusEl.textContent = '请在浏览器中打开以获得最佳体验';
-            }
-        }
-        
-        // 尝试自动播放
-        function attemptAutoPlay() {
-            if (hasInteracted || isPlaying) return;
-            
-            audio.play().then(() => {
-                isPlaying = true;
-                statusEl.textContent = '正在播放...';
-                playBtn.textContent = '暂停';
-            }).catch(e => {
-                if (!isIOS) {
-                    fallbackBtn.classList.remove('hidden');
-                    statusEl.textContent = '点击下方按钮播放';
-                }
-            });
-        }
-        
+        const cover = document.getElementById('cover');
+        
         // 播放/暂停控制
-        function togglePlayback() {
+        playBtn.addEventListener('click', function() {
             if (audio.paused) {
-                audio.play().then(() => {
-                    isPlaying = true;
-                    statusEl.textContent = '正在播放...';
-                    playBtn.textContent = '暂停';
-                    fallbackBtn.classList.add('hidden');
-                }).catch(handleAudioError);
+                audio.play()
+                    。then(() => {
+                        playBtn.textContent = '暂停';
+                    })
+                    。catch(error => {
+                        alert('播放失败: ' + error.message);
+                    });
             } else {
                 audio.pause();
-                isPlaying = false;
-                statusEl.textContent = '已暂停';
                 playBtn.textContent = '播放';
             }
-        }
-        
-        // 更新进度条
-        function updateProgress() {
-            if (audio.duration) {
-                const progress = (audio.currentTime / audio.duration) * 100;
-                progressBar.style.width = `${progress}%`;
-            }
-        }
-        
-        // iOS首次触摸处理
-        function handleFirstTouch() {
-            hasInteracted = true;
-            attemptAutoPlay();
-        }
-        
-        // 错误处理
-        function handleAudioError(error) {
-            console.error('播放错误:', error);
-            statusEl.textContent = '播放失败，请点击重试';
-            fallbackBtn.classList.remove('hidden');
-            
-            if (isWeChat) {
-                statusEl.textContent = '请点击右上角...选择"在浏览器打开"';
-            }
-        }
-        
-        // 启动
-        init();
+        });
+        
+        // 图片加载失败处理
+        cover.onerror = function() {
+            cover.style.display = 'none';
+            alert('封面图片加载失败');
+        };
     </script>
 </body>
 </html>
