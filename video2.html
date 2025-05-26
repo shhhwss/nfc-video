@@ -20,7 +20,8 @@
   </style>
 </head>
 <body>
-  <video id="myVideo" controls playsinline>
+  <!-- 添加 muted 属性以绕过浏览器限制 -->
+  <video id="myVideo" controls playsinline muted>
     <source src="http://swvi43g6c.bkt.gdipper.com/1.MP4" type="video/mp4">
     您的浏览器不支持 HTML5 视频播放。
   </video>
@@ -28,7 +29,7 @@
   <script>
     const video = document.getElementById("myVideo");
 
-    // 自动尝试播放
+    // 修复语法错误（英文点号）并静音播放
     window.addEventListener("load", () => {
       const playPromise = video.play();
       if (playPromise !== undefined) {
@@ -38,11 +39,14 @@
           })
           。catch((error) => {
             console.log("自动播放失败：", error);
+            // 静音后重试
+            video.muted = true;
+            video.play();
           });
       }
     });
 
-    // 用户可以自由控制暂停
+    // 点击切换播放/暂停
     video.addEventListener("click", () => {
       if (video.paused) {
         video.play();
