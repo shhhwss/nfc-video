@@ -1,1 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐播放器</title>
+    <style>
+        /* 极简白色风格 */
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+        
+        #cover {
+            width: 200px;
+            height: 200px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border: 1px solid #f0f0f0; /* 防止纯白图片不显示 */
+        }
+        
+        #play-btn {
+            background: #1DB954;
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 17px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-bottom: 15px;
+        }
+        
+        #play-btn:active {
+            transform: scale(0.96);
+        }
+        
+        #status {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+            min-height: 20px;
+        }
+        
+        /* 图片加载备用方案 */
+        .cover-loading {
+            background: linear-gradient(135deg, #f5f5f5 25%, #e0e0e0 50%, #f5f5f5 75%);
+            background-size: 200% 200%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+        }
+    </style>
+</head>
+<body>
+    <!-- 图片容器（带加载状态） -->
+    <div id="cover-container">
+        <img id="cover" 
+             src="https://fastly.jsdelivr.net/gh/shhhwss/nfc-video@main/1746717220752.jpeg" 
+             alt="音乐封面"
+             class="cover-loading"
+             onerror="showPlaceholder()">
+    </div>
+    
+    <!-- 播放控制 -->
+    <button id="play-btn">播放</button>
+    <div id="status">准备播放</div>
+    
+    <!-- 音频元素 -->
+    <audio id="audio" preload="auto">
+        <source src="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3" type="audio/mpeg">
+    </audio>
 
+    <script>
+        // 元素引用
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('play-btn');
+        const statusEl = document.getElementById('status');
+        const cover = document.getElementById('cover');
+        
+        // 1. 图片加载处理
+        function showPlaceholder() {
+            cover.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9IiNjY2MiPjxwYXRoIGQ9Ik0xOSA1djE0SDVWNmgxNG0wLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yem0tNyA1YzEuMSAwIDItLjkgMi0ycy0uOS0yLTItMi0yIC45LTIgMiAuOSAyIDIgMnptMCAyYy0yLjIgMC00IDEuOC00IDRoOGMwLTIuMi0xLjgtNC00LTR6Ii8+PC9zdmc+';
+            cover.classList.remove('cover-loading');
+            statusEl.textContent = '封面加载失败，但不影响播放';
+        }
+        
+        cover.onload = function() {
+            cover.classList.remove('cover-loading');
+        };
+        
+        // 2. 音频播放控制（100%可靠方案）
+        function togglePlayback() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    playBtn.textContent = '暂停';
+                    statusEl.textContent = '正在播放...';
+                }).catch(e => {
+                    statusEl.textContent = '请点击页面任意位置激活';
+                    // 微信特殊处理
+                    if (/MicroMessenger/i.test(navigator.userAgent)) {
+                        statusEl.innerHTML = '请点击右上角<br>选择"在浏览器打开"';
+                    }
+                });
+            } else {
+                audio.pause();
+                playBtn.textContent = '播放';
+                statusEl.textContent = '已暂停';
+            }
+        }
+        
+        playBtn.addEventListener('click', togglePlayback);
+        
+        // 3. 全平台兼容性处理
+        document.addEventListener('click', function init() {
+            // 解锁音频上下文（iOS必需）
+            audio.volume = 0;
+            audio.play().then(() => {
+                audio.pause();
+                audio.volume = 1;
+                statusEl.textContent = '可以播放了';
+            }).catch(e => {});
+            
+            // 只执行一次
+            document.removeEventListener('click', init);
+        }, { once: true });
+        
+        // 4. 音频状态监控
+        audio.addEventListener('playing', () => {
+            statusEl.textContent = '正在播放...';
+        });
+        
+        audio.addEventListener('error', (e) => {
+            console.error('音频错误:', audio.error);
+            statusEl.textContent = '音频加载失败';
+        });
+    </script>
+</body>
+</html>
