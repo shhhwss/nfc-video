@@ -1,1 +1,73 @@
-<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3"></head><body></body></html>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>音乐播放</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: sans-serif;
+    }
+    img {
+      width: 80%;
+      max-width: 300px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #1db954;
+      border: none;
+      border-radius: 20px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 音乐封面图 -->
+  <img src="https://shhhwss.github.io/nfc-video/cover.jpg" alt="封面图">
+
+  <!-- 控制按钮 -->
+  <button id="toggleBtn">暂停</button>
+
+  <!-- 音乐播放器 -->
+  <audio id="myAudio" src="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3" autoplay loop></audio>
+
+  <script>
+    const audio = document.getElementById("myAudio");
+    const button = document.getElementById("toggleBtn");
+
+    // 自动播放尝试
+    window.addEventListener("load", () => {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          。then(() => console.log("音乐已自动播放"))
+          。catch((err) => console.log("自动播放失败：", err));
+      }
+    });
+
+    // 用户点击切换播放状态
+    button.addEventListener("click", () => {
+      if (audio.paused) {
+        audio.play();
+        button.textContent = "暂停";
+      } else {
+        audio.pause();
+        button.textContent = "播放";
+      }
+    });
+  </script>
+
+</body>
+</html>
