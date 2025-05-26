@@ -1,116 +1,233 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>音乐播放</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NFC音乐播放</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            background: #000;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #121212;
+            color: white;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
-            font-family: Arial, sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        #player-container {
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
         }
         #cover {
-            width: 80%;
-            max-width: 300px;
-            border-radius: 10px;
+            width: 100%;
+            border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.8s ease, transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        #cover.loaded {
+            opacity: 1;
+        }
+        #cover:active {
+            transform: scale(0.98);
+        }
+        #status {
+            margin-top: 15px;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            min-height: 20px;
+        }
+        #progress-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #1DB954;
+            transition: width 0.1s linear;
+        }
+        .hidden {
+            display: none !important;
+        }
+        #fallback-btn {
+            background: #1DB954;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            margin-top: 20px;
             cursor: pointer;
             opacity: 0;
             transition: opacity 0.5s;
         }
-        #cover.show {
+        #fallback-btn.show {
             opacity: 1;
-        }
-        #status {
-            position: fixed;
-            bottom: 20px;
-            color: #aaa;
-            font-size: 14px;
-            text-align: center;
-            width: 100%;
-        }
-        /* 透明触发层（用于自动播放） */
-        #autoplay-trigger {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            z-index: 999;
         }
     </style>
 </head>
 <body>
+    <div id="player-container">
+        <!-- 封面图片（使用GitHub RAW链接） -->
+        <img id="cover" 
+             src="https://raw.githubusercontent.com/shhhwss/nfc-video/main/1746717220752.jpeg" 
+             alt="音乐封面"
+             crossorigin="anonymous">
+        
+        <!-- 进度条 -->
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        
+        <!-- 状态提示 -->
+        <div id="status">准备播放中...</div>
+        
+        <!-- 备用按钮（自动播放失败时显示） -->
+        <button id="fallback-btn">点击播放</button>
+    </div>
 
-<!-- 封面图片 -->
-<img id="cover" src="https://shhhwss.github.io/nfc-video/1746717220752.jpeg" alt="音乐封面">
+    <!-- 音频元素 -->
+    <audio id="audio" 
+           preload="auto" 
+           src="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3"
+           crossorigin="anonymous"></audio>
 
-<!-- 透明触发层（用于自动播放） -->
-<div id="autoplay-trigger"></div>
+    <!-- 透明触发层 -->
+    <div id="trigger-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;opacity:0;z-index:999;"></div>
 
-<!-- 状态提示 -->
-<div id="status">加载中...</div>
-
-<!-- 音乐播放器 -->
-<audio id="player" loop src="https://video-1361071953.cos.ap-beijing.myqcloud.com/music1.mp3"></audio>
-
-<script>
-    const cover = document.getElementById('cover');
-    const player = document.getElementById('player');
-    const statusEl = document.getElementById('status');
-    const trigger = document.getElementById('autoplay-trigger');
-
-    // 显示封面（渐入效果）
-    setTimeout(() => {
-        cover.classList.add('show');
-    }, 300);
-
-    // 尝试自动播放（3秒延迟，避免浏览器拦截）
-    setTimeout(() => {
-        trigger.click(); // 通过透明层触发点击
-    }, 3000);
-
-    // 透明层点击事件（实际自动播放逻辑）
-    trigger.addEventListener('click', () => {
-        player.play()
-            .then(() => {
-                statusEl.textContent = "正在播放...";
-            })
-            .catch(e => {
-                statusEl.textContent = "点击封面播放音乐";
-                // 自动播放失败时，转为点击封面播放
-                cover.style.cursor = "pointer";
+    <script>
+        // DOM元素
+        const audio = document.getElementById('audio');
+        const cover = document.getElementById('cover');
+        const statusEl = document.getElementById('status');
+        const progressBar = document.getElementById('progress-bar');
+        const fallbackBtn = document.getElementById('fallback-btn');
+        const triggerOverlay = document.getElementById('trigger-overlay');
+        
+        // 播放状态
+        let isPlaying = false;
+        let hasInteracted = false;
+        
+        // 初始化
+        function init() {
+            // 封面加载完成后显示
+            cover.onload = () => {
+                cover.classList.add('loaded');
+                statusEl.textContent = '准备就绪';
+            };
+            
+            // 音频加载状态
+            audio.addEventListener('loadeddata', () => {
+                statusEl.textContent = '准备播放...';
             });
-    });
-
-    // 封面点击事件（手动播放后备方案）
-    cover.addEventListener('click', () => {
-        if (player.paused) {
-            player.play()
-                。then(() => {
-                    statusEl.textContent = "正在播放...";
-                })
-                。catch(e => {
-                    statusEl.textContent = "播放失败，请重试";
-                });
-        } else {
-            player.pause();
-            statusEl.textContent = "已暂停，点击继续";
+            
+            // 进度条更新
+            audio.addEventListener('timeupdate', updateProgress);
+            
+            // 播放结束
+            audio.addEventListener('ended', () => {
+                isPlaying = false;
+                statusEl.textContent = '播放结束';
+            });
+            
+            // 错误处理
+            audio.addEventListener('error', () => {
+                handlePlayError('音频加载失败');
+            });
+            
+            // 透明层点击（自动播放尝试）
+            triggerOverlay.addEventListener('click', attemptAutoPlay);
+            
+            // 封面点击（回退播放）
+            cover.addEventListener('click', togglePlayback);
+            
+            // 备用按钮点击
+            fallbackBtn.addEventListener('click', () => {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    statusEl.textContent = '正在播放...';
+                    fallbackBtn.classList.remove('show');
+                }).catch(handlePlayError);
+            });
+            
+            // iOS特殊处理
+            document.addEventListener('touchstart', handleFirstTouch, { once: true });
+            
+            // 启动自动播放尝试
+            setTimeout(attemptAutoPlay, 500);
         }
-    });
-
-    // iOS特殊处理（首次触摸时触发）
-    document.addEventListener('touchstart', function firstTouch() {
-        trigger.click();
-        document.removeEventListener('touchstart', firstTouch);
-    }, { once: true });
-</script>
+        
+        // 尝试自动播放
+        function attemptAutoPlay() {
+            if (hasInteracted || isPlaying) return;
+            
+            audio.play().then(() => {
+                isPlaying = true;
+                statusEl.textContent = '正在播放...';
+            }).catch(e => {
+                // 自动播放失败时显示备用按钮
+                fallbackBtn.classList.add('show');
+                statusEl.textContent = '点击下方按钮播放';
+            });
+        }
+        
+        // 播放/暂停控制
+        function togglePlayback() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    statusEl.textContent = '正在播放...';
+                    fallbackBtn.classList.remove('show');
+                }).catch(handlePlayError);
+            } else {
+                audio.pause();
+                isPlaying = false;
+                statusEl.textContent = '已暂停';
+            }
+        }
+        
+        // 更新进度条
+        function updateProgress() {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+        
+        // iOS首次触摸处理
+        function handleFirstTouch() {
+            hasInteracted = true;
+            attemptAutoPlay();
+        }
+        
+        // 错误处理
+        function handlePlayError(error) {
+            console.error('播放错误:', error);
+            statusEl.textContent = '播放失败，请点击重试';
+            fallbackBtn.classList.add('show');
+            
+            // 微信环境特殊提示
+            if (/MicroMessenger/i.test(navigator.userAgent)) {
+                statusEl.textContent = '请点击右上角...选择"在浏览器打开"';
+            }
+        }
+        
+        // 启动
+        init();
+    </script>
 </body>
 </html>
