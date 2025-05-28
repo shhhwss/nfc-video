@@ -26,7 +26,7 @@
   </style>
 </head>
 <body>
-  < img src="https://xxx.com/cover.jpg" alt="封面" />
+  < img src="https://github.com/shhhwss/nfc-video/blob/main/photo/gzxdg.JPG" alt="封面" />
   <audio controls autoplay>
     <source src="https://cdn.315376.xyz/music/gzxdg.mp3" type="audio/mpeg" />
     浏览器不支持音频播放
