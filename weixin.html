@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -10,11 +11,11 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -28,123 +29,138 @@
             max-width: 500px;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
             overflow: hidden;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .header {
-            background: linear-gradient(135deg, #ff9966, #ff5e62);
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
             color: white;
             text-align: center;
-            padding: 25px 20px;
-            position: relative;
-        }
-        
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        
-        .header p {
-            opacity: 0.9;
-            font-size: 14px;
-        }
-        
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 20px;
-            background: #ff5e62;
-            transform: rotate(45deg);
-        }
-        
-        .content {
-            padding: 30px 25px;
-        }
-        
-        .participants {
-            margin-bottom: 30px;
-        }
-        
-        .participants h2 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #ff5e62;
-            display: flex;
-            align-items: center;
-            padding-left: 10px;
-            border-left: 4px solid #ff5e62;
-        }
-        
-        .participants h2 i {
-            margin-right: 10px;
-        }
-        
-        .participant-list {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        
-        .participant {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .participant:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            border-color: #6a11cb;
-        }
-        
-        .participant .name {
-            font-weight: 600;
-            font-size: 16px;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        
-        .participant .id {
-            font-size: 12px;
-            color: #6c757d;
-            background: white;
-            padding: 3px 8px;
-            border-radius: 10px;
-            display: inline-block;
-        }
-        
-        .draw-area {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .winner-display {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
-            border-radius: 18px;
             padding: 30px 20px;
-            margin-bottom: 25px;
-            min-height: 180px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 8px 20px rgba(38, 117, 252, 0.3);
             position: relative;
             overflow: hidden;
         }
         
-        .winner-display::before {
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: rotate 10s infinite linear;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            opacity: 0.95;
+            font-size: 16px;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #ff7e5f;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .section-title i {
+            margin-right: 12px;
+            font-size: 24px;
+        }
+        
+        .participant-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .participant-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 18px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .participant-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+        }
+        
+        .participant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: #ff7e5f;
+        }
+        
+        .participant-name {
+            font-weight: 700;
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .participant-id {
+            font-size: 13px;
+            color: #6c757d;
+            background: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            font-weight: 500;
+        }
+        
+        .draw-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .draw-section::before {
             content: '';
             position: absolute;
             top: -50%;
@@ -152,190 +168,169 @@
             width: 200%;
             height: 200%;
             background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: shine 3s infinite linear;
+            animation: shine 4s infinite linear;
         }
         
-        @keyframes shine {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .winner-display.default {
+        .winner-display {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
-        }
-        
-        .winner-display.default i {
-            font-size: 48px;
-            margin-bottom: 15px;
-            opacity: 0.9;
-        }
-        
-        .winner-display.default p {
-            font-size: 16px;
-            font-weight: 500;
-        }
-        
-        .winner-result {
-            text-align: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             position: relative;
             z-index: 2;
         }
         
-        .winner-result .name {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(45deg, #fff, #ffeb3b);
+        .winner-name {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: glow 2s ease-in-out infinite alternate;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        @keyframes glow {
-            from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ffeb3b, 0 0 20px #ffeb3b; }
-            to { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ffeb3b, 0 0 40px #ffeb3b; }
-        }
-        
-        .winner-result .id {
+        .winner-id {
             font-size: 16px;
-            opacity: 0.9;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 15px;
+            color: #6c757d;
+            background: #f8f9fa;
+            padding: 6px 15px;
             border-radius: 20px;
-            display: inline-block;
+            font-weight: 500;
         }
         
-        .draw-btn {
-            background: linear-gradient(135deg, #ff9966, #ff5e62);
-            color: white;
+        .default-display {
+            color: #6c757d;
+        }
+        
+        .default-display i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        
+        .default-display p {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 16px 30px;
             border: none;
-            padding: 18px 45px;
-            font-size: 18px;
-            font-weight: 600;
             border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 6px 15px rgba(255, 94, 98, 0.4);
             transition: all 0.3s ease;
-            outline: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             position: relative;
-            overflow: hidden;
+            z-index: 2;
         }
         
-        .draw-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
+        .btn-primary {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
         }
         
-        .draw-btn:hover {
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+        
+        .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(255, 94, 98, 0.6);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
         
-        .draw-btn:hover::before {
-            left: 100%;
-        }
-        
-        .draw-btn:active {
+        .btn:active {
             transform: translateY(1px);
         }
         
-        .draw-btn i {
-            margin-right: 10px;
+        .btn i {
+            margin-right: 8px;
         }
         
-        .draw-btn.rolling {
+        .btn.rolling {
             animation: pulse 1.5s infinite;
             background: linear-gradient(135deg, #2c3e50, #4ca1af);
         }
         
         @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 6px 15px rgba(44, 62, 80, 0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 10px 25px rgba(44, 62, 80, 0.6); }
-            100% { transform: scale(1); box-shadow: 0 6px 15px rgba(44, 62, 80, 0.4); }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
-        .history {
-            margin-top: 30px;
-        }
-        
-        .history h2 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #6a11cb;
-            display: flex;
-            align-items: center;
-            padding-left: 10px;
-            border-left: 4px solid #6a11cb;
-        }
-        
-        .history h2 i {
-            margin-right: 10px;
+        .history-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
         
         .history-list {
-            max-height: 150px;
+            max-height: 200px;
             overflow-y: auto;
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         
         .history-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid #e9ecef;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .history-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
         }
         
         .history-item:last-child {
-            border-bottom: none;
             margin-bottom: 0;
         }
         
-        .history-item .name {
+        .history-name {
             font-weight: 600;
             color: #2c3e50;
+            font-size: 16px;
         }
         
-        .history-item .time {
-            font-size: 12px;
+        .history-time {
+            font-size: 14px;
             color: #6c757d;
+            background: #f8f9fa;
+            padding: 4px 10px;
+            border-radius: 15px;
         }
         
-        /* 滚动条样式 */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #c5c5c5;
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a5a5a5;
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 14px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
         }
         
         /* 响应式设计 */
@@ -345,24 +340,27 @@
             }
             
             .header {
-                padding: 20px 15px;
+                padding: 25px 15px;
             }
             
             .content {
                 padding: 20px;
             }
             
-            .participant-list {
+            .participant-grid {
                 grid-template-columns: 1fr;
             }
             
-            .draw-btn {
-                padding: 16px 35px;
-                font-size: 16px;
+            .action-buttons {
+                flex-direction: column;
             }
             
-            .winner-result .name {
-                font-size: 24px;
+            .btn {
+                width: 100%;
+            }
+            
+            .winner-name {
+                font-size: 28px;
             }
         }
     </style>
@@ -375,30 +373,45 @@
         </div>
         
         <div class="content">
-            <div class="participants">
-                <h2><i class="fas fa-users"></i> 参与者列表</h2>
-                <div class="participant-list" id="participantList">
-                    <!-- 参与者列表由JS生成 -->
-                </div>
+            <div class="section-title">
+                <i class="fas fa-users"></i>
+                <span>参与者列表</span>
             </div>
             
-            <div class="draw-area">
-                <div class="winner-display default" id="winnerDisplay">
+            <div class="participant-grid" id="participantList">
+                <!-- 参与者列表由JS生成 -->
+            </div>
+            
+            <div class="draw-section">
+                <div class="winner-display default-display" id="winnerDisplay">
                     <i class="fas fa-gift"></i>
                     <p>点击抽奖按钮开始抽奖</p>
                 </div>
                 
-                <button class="draw-btn" id="drawBtn">
-                    <i class="fas fa-dice"></i> 开始抽奖
-                </button>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="drawBtn">
+                        <i class="fas fa-dice"></i> 开始抽奖
+                    </button>
+                    <button class="btn btn-secondary" id="resetBtn">
+                        <i class="fas fa-redo"></i> 重置记录
+                    </button>
+                </div>
             </div>
             
-            <div class="history">
-                <h2><i class="fas fa-history"></i> 中奖记录</h2>
+            <div class="section-title">
+                <i class="fas fa-history"></i>
+                <span>中奖记录</span>
+            </div>
+            
+            <div class="history-section">
                 <div class="history-list" id="historyList">
                     <!-- 中奖记录由JS生成 -->
                 </div>
             </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2023 微信小程序抽奖系统 | shhhwss.github.io</p>
         </div>
     </div>
 
@@ -419,6 +432,7 @@
             const participantList = document.getElementById('participantList');
             const winnerDisplay = document.getElementById('winnerDisplay');
             const drawBtn = document.getElementById('drawBtn');
+            const resetBtn = document.getElementById('resetBtn');
             const historyList = document.getElementById('historyList');
             
             let isDrawing = false;
@@ -429,13 +443,13 @@
             function renderParticipants() {
                 participantList.innerHTML = '';
                 participants.forEach(participant => {
-                    const div = document.createElement('div');
-                    div.className = 'participant';
-                    div.innerHTML = `
-                        <div class="name">${participant.name}</div>
-                        <div class="id">ID: ${participant.id}</div>
+                    const card = document.createElement('div');
+                    card.className = 'participant-card';
+                    card.innerHTML = `
+                        <div class="participant-name">${participant.name}</div>
+                        <div class="participant-id">ID: ${participant.id}</div>
                     `;
-                    participantList.appendChild(div);
+                    participantList.appendChild(card);
                 });
             }
             
@@ -443,18 +457,18 @@
             function renderHistory() {
                 historyList.innerHTML = '';
                 if (winnersHistory.length === 0) {
-                    historyList.innerHTML = '<div class="history-item">暂无记录</div>';
+                    historyList.innerHTML = '<div class="history-item">暂无中奖记录</div>';
                     return;
                 }
                 
                 winnersHistory.slice().reverse().forEach(record => {
-                    const div = document.createElement('div');
-                    div.className = 'history-item';
-                    div.innerHTML = `
-                        <div class="name">${record.name}</div>
-                        <div class="time">${record.time}</div>
+                    const item = document.createElement('div');
+                    item.className = 'history-item';
+                    item.innerHTML = `
+                        <div class="history-name">${record.name}</div>
+                        <div class="history-time">${record.time}</div>
                     `;
-                    historyList.appendChild(div);
+                    historyList.appendChild(item);
                 });
             }
             
@@ -472,8 +486,8 @@
                 drawBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 抽奖中...';
                 
                 let counter = 0;
-                const maxCycles = 40; // 增加循环次数让动画更流畅
-                const speed = 80; // 初始速度
+                const maxCycles = 40;
+                const speed = 80;
                 const eligibleParticipants = getEligibleParticipants();
                 
                 // 清空显示区域
@@ -487,10 +501,8 @@
                     
                     // 显示随机选中的参与者
                     winnerDisplay.innerHTML = `
-                        <div class="winner-result">
-                            <div class="name">${participant.name}</div>
-                            <div class="id">ID: ${participant.id}</div>
-                        </div>
+                        <div class="winner-name">${participant.name}</div>
+                        <div class="winner-id">ID: ${participant.id}</div>
                     `;
                     
                     counter++;
@@ -504,10 +516,8 @@
                             const participant = participants[randomIndex];
                             
                             winnerDisplay.innerHTML = `
-                                <div class="winner-result">
-                                    <div class="name">${participant.name}</div>
-                                    <div class="id">ID: ${participant.id}</div>
-                                </div>
+                                <div class="winner-name">${participant.name}</div>
+                                <div class="winner-id">ID: ${participant.id}</div>
                             `;
                             
                             counter++;
@@ -532,10 +542,8 @@
                 
                 // 显示最终中奖者
                 winnerDisplay.innerHTML = `
-                    <div class="winner-result">
-                        <div class="name">${winner.name}</div>
-                        <div class="id">ID: ${winner.id}</div>
-                    </div>
+                    <div class="winner-name">${winner.name}</div>
+                    <div class="winner-id">ID: ${winner.id}</div>
                 `;
                 
                 // 添加到历史记录
@@ -556,12 +564,26 @@
                 renderHistory();
             }
             
+            // 重置记录
+            function resetHistory() {
+                winnersHistory = [];
+                winnerDisplay.className = 'winner-display default-display';
+                winnerDisplay.innerHTML = `
+                    <i class="fas fa-gift"></i>
+                    <p>点击抽奖按钮开始抽奖</p>
+                `;
+                renderHistory();
+            }
+            
             // 初始化
             renderParticipants();
             renderHistory();
             
             // 绑定抽奖按钮事件
             drawBtn.addEventListener('click', startDraw);
+            
+            // 绑定重置按钮事件
+            resetBtn.addEventListener('click', resetHistory);
         });
     </script>
 </body>
