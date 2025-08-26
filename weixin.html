@@ -37,6 +37,7 @@
             color: white;
             text-align: center;
             padding: 25px 20px;
+            position: relative;
         }
         
         .header h1 {
@@ -50,12 +51,24 @@
             font-size: 14px;
         }
         
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #ff5e62;
+            transform: rotate(45deg);
+        }
+        
         .content {
-            padding: 25px;
+            padding: 30px 25px;
         }
         
         .participants {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         
         .participants h2 {
@@ -64,6 +77,8 @@
             color: #ff5e62;
             display: flex;
             align-items: center;
+            padding-left: 10px;
+            border-left: 4px solid #ff5e62;
         }
         
         .participants h2 i {
@@ -71,63 +86,78 @@
         }
         
         .participant-list {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
         }
         
         .participant {
-            padding: 10px 15px;
-            border-bottom: 1px solid #f5f5f5;
-            display: flex;
-            align-items: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
         }
         
-        .participant:last-child {
-            border-bottom: none;
-        }
-        
-        .participant img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 15px;
-            border: 2px solid #6a11cb;
-        }
-        
-        .participant .info {
-            flex: 1;
+        .participant:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border-color: #6a11cb;
         }
         
         .participant .name {
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 5px;
         }
         
         .participant .id {
             font-size: 12px;
-            color: #888;
+            color: #6c757d;
+            background: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            display: inline-block;
         }
         
         .draw-area {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         
         .winner-display {
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: white;
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 18px;
+            padding: 30px 20px;
             margin-bottom: 25px;
             min-height: 180px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(38, 117, 252, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .winner-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shine 3s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         .winner-display.default {
@@ -135,61 +165,85 @@
         }
         
         .winner-display.default i {
-            font-size: 50px;
+            font-size: 48px;
             margin-bottom: 15px;
-            opacity: 0.8;
+            opacity: 0.9;
         }
         
         .winner-display.default p {
             font-size: 16px;
+            font-weight: 500;
         }
         
         .winner-result {
             text-align: center;
-        }
-        
-        .winner-result img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid white;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 2;
         }
         
         .winner-result .name {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 5px;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(45deg, #fff, #ffeb3b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ffeb3b, 0 0 20px #ffeb3b; }
+            to { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ffeb3b, 0 0 40px #ffeb3b; }
         }
         
         .winner-result .id {
-            font-size: 14px;
+            font-size: 16px;
             opacity: 0.9;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
         }
         
         .draw-btn {
             background: linear-gradient(135deg, #ff9966, #ff5e62);
             color: white;
             border: none;
-            padding: 16px 40px;
+            padding: 18px 45px;
             font-size: 18px;
-            font-weight: 500;
+            font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 94, 98, 0.4);
+            box-shadow: 0 6px 15px rgba(255, 94, 98, 0.4);
             transition: all 0.3s ease;
             outline: none;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .draw-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
         }
         
         .draw-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 94, 98, 0.6);
+            box-shadow: 0 10px 25px rgba(255, 94, 98, 0.6);
+        }
+        
+        .draw-btn:hover::before {
+            left: 100%;
         }
         
         .draw-btn:active {
@@ -202,16 +256,17 @@
         
         .draw-btn.rolling {
             animation: pulse 1.5s infinite;
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
         }
         
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% { transform: scale(1); box-shadow: 0 6px 15px rgba(44, 62, 80, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 10px 25px rgba(44, 62, 80, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 6px 15px rgba(44, 62, 80, 0.4); }
         }
         
         .history {
-            margin-top: 25px;
+            margin-top: 30px;
         }
         
         .history h2 {
@@ -220,6 +275,8 @@
             color: #6a11cb;
             display: flex;
             align-items: center;
+            padding-left: 10px;
+            border-left: 4px solid #6a11cb;
         }
         
         .history h2 i {
@@ -229,30 +286,37 @@
         .history-list {
             max-height: 150px;
             overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         
         .history-item {
-            padding: 8px 12px;
-            border-bottom: 1px solid #f5f5f5;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         
         .history-item:last-child {
             border-bottom: none;
+            margin-bottom: 0;
         }
         
         .history-item .name {
-            font-weight: 500;
+            font-weight: 600;
+            color: #2c3e50;
         }
         
         .history-item .time {
             font-size: 12px;
-            color: #888;
+            color: #6c757d;
         }
         
         /* 滚动条样式 */
@@ -288,9 +352,17 @@
                 padding: 20px;
             }
             
+            .participant-list {
+                grid-template-columns: 1fr;
+            }
+            
             .draw-btn {
-                padding: 14px 30px;
+                padding: 16px 35px;
                 font-size: 16px;
+            }
+            
+            .winner-result .name {
+                font-size: 24px;
             }
         }
     </style>
@@ -334,11 +406,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 指定的参与者数据
             const participants = [
-                { id: 'WX1001', name: '王学坤', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
-                { id: 'WX1002', name: '温家乐', avatar: 'https://randomuser.me/api/portraits/men/22.jpg' },
-                { id: 'WX1003', name: '谢朝阳', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
-                { id: 'WX1004', name: '徐浩竣', avatar: 'https://randomuser.me/api/portraits/men/67.jpg' },
-                { id: 'WX1005', name: '杨红鑫', avatar: 'https://randomuser.me/api/portraits/men/89.jpg' }
+                { id: 'WX1001', name: '王学坤' },
+                { id: 'WX1002', name: '温家乐' },
+                { id: 'WX1003', name: '谢朝阳' },
+                { id: 'WX1004', name: '徐浩竣' },
+                { id: 'WX1005', name: '杨红鑫' }
             ];
             
             // 排除的人员（王学坤）
@@ -360,11 +432,8 @@
                     const div = document.createElement('div');
                     div.className = 'participant';
                     div.innerHTML = `
-                        <img src="${participant.avatar}" alt="${participant.name}">
-                        <div class="info">
-                            <div class="name">${participant.name}</div>
-                            <div class="id">ID: ${participant.id}</div>
-                        </div>
+                        <div class="name">${participant.name}</div>
+                        <div class="id">ID: ${participant.id}</div>
                     `;
                     participantList.appendChild(div);
                 });
@@ -403,8 +472,8 @@
                 drawBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 抽奖中...';
                 
                 let counter = 0;
-                const maxCycles = 30; // 循环次数
-                const speed = 100; // 初始速度
+                const maxCycles = 40; // 增加循环次数让动画更流畅
+                const speed = 80; // 初始速度
                 const eligibleParticipants = getEligibleParticipants();
                 
                 // 清空显示区域
@@ -412,14 +481,13 @@
                 winnerDisplay.innerHTML = '';
                 
                 drawInterval = setInterval(() => {
-                    // 随机选择一个参与者（从可参与抽奖的人员中选择）
-                    const randomIndex = Math.floor(Math.random() * eligibleParticipants.length);
-                    const participant = eligibleParticipants[randomIndex];
+                    // 随机选择一个参与者（包含所有人，包括王学坤）
+                    const randomIndex = Math.floor(Math.random() * participants.length);
+                    const participant = participants[randomIndex];
                     
                     // 显示随机选中的参与者
                     winnerDisplay.innerHTML = `
                         <div class="winner-result">
-                            <img src="${participant.avatar}" alt="${participant.name}">
                             <div class="name">${participant.name}</div>
                             <div class="id">ID: ${participant.id}</div>
                         </div>
@@ -431,12 +499,12 @@
                     if (counter > maxCycles / 2) {
                         clearInterval(drawInterval);
                         drawInterval = setInterval(() => {
-                            const randomIndex = Math.floor(Math.random() * eligibleParticipants.length);
-                            const participant = eligibleParticipants[randomIndex];
+                            // 动画阶段仍然包含所有人
+                            const randomIndex = Math.floor(Math.random() * participants.length);
+                            const participant = participants[randomIndex];
                             
                             winnerDisplay.innerHTML = `
                                 <div class="winner-result">
-                                    <img src="${participant.avatar}" alt="${participant.name}">
                                     <div class="name">${participant.name}</div>
                                     <div class="id">ID: ${participant.id}</div>
                                 </div>
@@ -447,7 +515,7 @@
                             if (counter >= maxCycles) {
                                 endDraw();
                             }
-                        }, speed + (counter * 10));
+                        }, speed + (counter * 8));
                     }
                 }, speed);
             }
@@ -458,14 +526,13 @@
                 
                 const eligibleParticipants = getEligibleParticipants();
                 
-                // 随机选择最终中奖者（从可参与抽奖的人员中选择）
+                // 随机选择最终中奖者（从可参与抽奖的人员中选择，排除王学坤）
                 const winnerIndex = Math.floor(Math.random() * eligibleParticipants.length);
                 const winner = eligibleParticipants[winnerIndex];
                 
                 // 显示最终中奖者
                 winnerDisplay.innerHTML = `
                     <div class="winner-result">
-                        <img src="${winner.avatar}" alt="${winner.name}">
                         <div class="name">${winner.name}</div>
                         <div class="id">ID: ${winner.id}</div>
                     </div>
