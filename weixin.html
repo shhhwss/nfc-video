@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -13,7 +12,7 @@
             box-sizing: border-box;
             font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
         }
-        
+        
         body {
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             min-height: 100vh;
@@ -23,7 +22,7 @@
             padding: 20px;
             color: #333;
         }
-        
+        
         .container {
             width: 100%;
             max-width: 500px;
@@ -32,33 +31,33 @@
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             overflow: hidden;
         }
-        
+        
         .header {
             background: linear-gradient(135deg, #ff9966, #ff5e62);
             color: white;
             text-align: center;
             padding: 25px 20px;
         }
-        
+        
         .header h1 {
             font-size: 24px;
             margin-bottom: 10px;
             font-weight: 600;
         }
-        
+        
         .header p {
             opacity: 0.9;
             font-size: 14px;
         }
-        
+        
         .content {
             padding: 25px;
         }
-        
+        
         .participants {
             margin-bottom: 25px;
         }
-        
+        
         .participants h2 {
             font-size: 18px;
             margin-bottom: 15px;
@@ -66,11 +65,11 @@
             display: flex;
             align-items: center;
         }
-        
+        
         .participants h2 i {
             margin-right: 10px;
         }
-        
+        
         .participant-list {
             max-height: 200px;
             overflow-y: auto;
@@ -78,18 +77,18 @@
             border-radius: 10px;
             padding: 10px;
         }
-        
+        
         .participant {
             padding: 10px 15px;
             border-bottom: 1px solid #f5f5f5;
             display: flex;
             align-items: center;
         }
-        
+        
         .participant:last-child {
             border-bottom: none;
         }
-        
+        
         .participant img {
             width: 40px;
             height: 40px;
@@ -98,41 +97,25 @@
             margin-right: 15px;
             border: 2px solid #6a11cb;
         }
-        
-        .participant.excluded {
-            opacity: 0.6;
-            position: relative;
-        }
-        
-        .participant.excluded::after {
-            content: "不参与抽奖";
-            position: absolute;
-            right: 15px;
-            background: #ff5e62;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-        }
-        
+        
         .participant .info {
             flex: 1;
         }
-        
+        
         .participant .name {
             font-weight: 500;
         }
-        
+        
         .participant .id {
             font-size: 12px;
             color: #888;
         }
-        
+        
         .draw-area {
             text-align: center;
             margin-bottom: 25px;
         }
-        
+        
         .winner-display {
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: white;
@@ -146,25 +129,25 @@
             align-items: center;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        
+        
         .winner-display.default {
             justify-content: center;
         }
-        
+        
         .winner-display.default i {
             font-size: 50px;
             margin-bottom: 15px;
             opacity: 0.8;
         }
-        
+        
         .winner-display.default p {
             font-size: 16px;
         }
-        
+        
         .winner-result {
             text-align: center;
         }
-        
+        
         .winner-result img {
             width: 80px;
             height: 80px;
@@ -174,18 +157,18 @@
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-        
+        
         .winner-result .name {
             font-size: 22px;
             font-weight: 600;
             margin-bottom: 5px;
         }
-        
+        
         .winner-result .id {
             font-size: 14px;
             opacity: 0.9;
         }
-        
+        
         .draw-btn {
             background: linear-gradient(135deg, #ff9966, #ff5e62);
             color: white;
@@ -203,34 +186,34 @@
             justify-content: center;
             margin: 0 auto;
         }
-        
+        
         .draw-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(255, 94, 98, 0.6);
         }
-        
+        
         .draw-btn:active {
             transform: translateY(1px);
         }
-        
+        
         .draw-btn i {
             margin-right: 10px;
         }
-        
+        
         .draw-btn.rolling {
             animation: pulse 1.5s infinite;
         }
-        
+        
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        
+        
         .history {
             margin-top: 25px;
         }
-        
+        
         .history h2 {
             font-size: 18px;
             margin-bottom: 15px;
@@ -238,11 +221,11 @@
             display: flex;
             align-items: center;
         }
-        
+        
         .history h2 i {
             margin-right: 10px;
         }
-        
+        
         .history-list {
             max-height: 150px;
             overflow-y: auto;
@@ -250,7 +233,7 @@
             border-radius: 10px;
             padding: 10px;
         }
-        
+        
         .history-item {
             padding: 8px 12px;
             border-bottom: 1px solid #f5f5f5;
@@ -258,53 +241,53 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+        
         .history-item:last-child {
             border-bottom: none;
         }
-        
+        
         .history-item .name {
             font-weight: 500;
         }
-        
+        
         .history-item .time {
             font-size: 12px;
             color: #888;
         }
-        
+        
         /* 滚动条样式 */
         ::-webkit-scrollbar {
             width: 6px;
         }
-        
+        
         ::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
         }
-        
+        
         ::-webkit-scrollbar-thumb {
             background: #c5c5c5;
             border-radius: 10px;
         }
-        
+        
         ::-webkit-scrollbar-thumb:hover {
             background: #a5a5a5;
         }
-        
+        
         /* 响应式设计 */
         @media (max-width: 600px) {
             .container {
                 border-radius: 15px;
             }
-            
+            
             .header {
                 padding: 20px 15px;
             }
-            
+            
             .content {
                 padding: 20px;
             }
-            
+            
             .draw-btn {
                 padding: 14px 30px;
                 font-size: 16px;
@@ -316,9 +299,9 @@
     <div class="container">
         <div class="header">
             <h1>微信小程序抽奖系统</h1>
-            <p>公平 • 随机 • 高效 (王学坤不参与抽奖)</p>
+            <p>公平 • 随机 • 高效</p>
         </div>
-        
+        
         <div class="content">
             <div class="participants">
                 <h2><i class="fas fa-users"></i> 参与者列表</h2>
@@ -326,18 +309,18 @@
                     <!-- 参与者列表由JS生成 -->
                 </div>
             </div>
-            
+            
             <div class="draw-area">
                 <div class="winner-display default" id="winnerDisplay">
                     <i class="fas fa-gift"></i>
                     <p>点击抽奖按钮开始抽奖</p>
                 </div>
-                
+                
                 <button class="draw-btn" id="drawBtn">
                     <i class="fas fa-dice"></i> 开始抽奖
                 </button>
             </div>
-            
+            
             <div class="history">
                 <h2><i class="fas fa-history"></i> 中奖记录</h2>
                 <div class="history-list" id="historyList">
@@ -351,28 +334,31 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 指定的参与者数据
             const participants = [
-                { id: 'WX1001', name: '王学坤', avatar: 'https://randomuser.me/api/portraits/men/32.jpg', excluded: true },
-                { id: 'WX1002', name: '温家乐', avatar: 'https://randomuser.me/api/portraits/men/22.jpg', excluded: false },
-                { id: 'WX1003', name: '谢朝阳', avatar: 'https://randomuser.me/api/portraits/men/45.jpg', excluded: false },
-                { id: 'WX1004', name: '徐浩竣', avatar: 'https://randomuser.me/api/portraits/men/67.jpg', excluded: false },
-                { id: 'WX1005', name: '杨红鑫', avatar: 'https://randomuser.me/api/portraits/men/89.jpg', excluded: false }
+                { id: 'WX1001', name: '王学坤', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
+                { id: 'WX1002', name: '温家乐', avatar: 'https://randomuser.me/api/portraits/men/22.jpg' },
+                { id: 'WX1003', name: '谢朝阳', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
+                { id: 'WX1004', name: '徐浩竣', avatar: 'https://randomuser.me/api/portraits/men/67.jpg' },
+                { id: 'WX1005', name: '杨红鑫', avatar: 'https://randomuser.me/api/portraits/men/89.jpg' }
             ];
-            
+            
+            // 排除的人员（王学坤）
+            const excludedName = "王学坤";
+            
             const participantList = document.getElementById('participantList');
             const winnerDisplay = document.getElementById('winnerDisplay');
             const drawBtn = document.getElementById('drawBtn');
             const historyList = document.getElementById('historyList');
-            
+            
             let isDrawing = false;
             let drawInterval;
             let winnersHistory = [];
-            
+            
             // 渲染参与者列表
             function renderParticipants() {
                 participantList.innerHTML = '';
                 participants.forEach(participant => {
                     const div = document.createElement('div');
-                    div.className = `participant ${participant.excluded ? 'excluded' : ''}`;
+                    div.className = 'participant';
                     div.innerHTML = `
                         <img src="${participant.avatar}" alt="${participant.name}">
                         <div class="info">
@@ -383,7 +369,7 @@
                     participantList.appendChild(div);
                 });
             }
-            
+            
             // 渲染中奖记录
             function renderHistory() {
                 historyList.innerHTML = '';
@@ -391,7 +377,7 @@
                     historyList.innerHTML = '<div class="history-item">暂无记录</div>';
                     return;
                 }
-                
+                
                 winnersHistory.slice().reverse().forEach(record => {
                     const div = document.createElement('div');
                     div.className = 'history-item';
@@ -402,34 +388,34 @@
                     historyList.appendChild(div);
                 });
             }
-            
-            // 获取可参与抽奖的人员
+            
+            // 获取可参与抽奖的人员（排除王学坤）
             function getEligibleParticipants() {
-                return participants.filter(p => !p.excluded);
+                return participants.filter(p => p.name !== excludedName);
             }
-            
+            
             // 开始抽奖
             function startDraw() {
                 if (isDrawing) return;
-                
+                
                 isDrawing = true;
                 drawBtn.classList.add('rolling');
                 drawBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 抽奖中...';
-                
+                
                 let counter = 0;
                 const maxCycles = 30; // 循环次数
                 const speed = 100; // 初始速度
                 const eligibleParticipants = getEligibleParticipants();
-                
+                
                 // 清空显示区域
                 winnerDisplay.className = 'winner-display';
                 winnerDisplay.innerHTML = '';
-                
+                
                 drawInterval = setInterval(() => {
                     // 随机选择一个参与者（从可参与抽奖的人员中选择）
                     const randomIndex = Math.floor(Math.random() * eligibleParticipants.length);
                     const participant = eligibleParticipants[randomIndex];
-                    
+                    
                     // 显示随机选中的参与者
                     winnerDisplay.innerHTML = `
                         <div class="winner-result">
@@ -438,16 +424,16 @@
                             <div class="id">ID: ${participant.id}</div>
                         </div>
                     `;
-                    
+                    
                     counter++;
-                    
+                    
                     // 逐渐减慢速度
                     if (counter > maxCycles / 2) {
                         clearInterval(drawInterval);
                         drawInterval = setInterval(() => {
                             const randomIndex = Math.floor(Math.random() * eligibleParticipants.length);
                             const participant = eligibleParticipants[randomIndex];
-                            
+                            
                             winnerDisplay.innerHTML = `
                                 <div class="winner-result">
                                     <img src="${participant.avatar}" alt="${participant.name}">
@@ -455,9 +441,9 @@
                                     <div class="id">ID: ${participant.id}</div>
                                 </div>
                             `;
-                            
+                            
                             counter++;
-                            
+                            
                             if (counter >= maxCycles) {
                                 endDraw();
                             }
@@ -465,17 +451,17 @@
                     }
                 }, speed);
             }
-            
+            
             // 结束抽奖
             function endDraw() {
                 clearInterval(drawInterval);
-                
+                
                 const eligibleParticipants = getEligibleParticipants();
-                
+                
                 // 随机选择最终中奖者（从可参与抽奖的人员中选择）
                 const winnerIndex = Math.floor(Math.random() * eligibleParticipants.length);
                 const winner = eligibleParticipants[winnerIndex];
-                
+                
                 // 显示最终中奖者
                 winnerDisplay.innerHTML = `
                     <div class="winner-result">
@@ -484,29 +470,29 @@
                         <div class="id">ID: ${winner.id}</div>
                     </div>
                 `;
-                
+                
                 // 添加到历史记录
                 const now = new Date();
                 const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-                
+                
                 winnersHistory.push({
                     name: winner.name,
                     time: timeString
                 });
-                
+                
                 // 更新按钮状态
                 drawBtn.classList.remove('rolling');
                 drawBtn.innerHTML = '<i class="fas fa-dice"></i> 开始抽奖';
                 isDrawing = false;
-                
+                
                 // 更新历史记录显示
                 renderHistory();
             }
-            
+            
             // 初始化
             renderParticipants();
             renderHistory();
-            
+            
             // 绑定抽奖按钮事件
             drawBtn.addEventListener('click', startDraw);
         });
