@@ -3,7 +3,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>微信小程序抽奖系统</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -11,138 +11,122 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
             color: #333;
+            -webkit-text-size-adjust: 100%;
         }
         
         .container {
             width: 100%;
-            max-width: 500px;
-            background: white;
+            max-width: 100%;
+            background: linear-gradient(135deg, #fdbb2d 0%, #22c1c3 100%);
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            animation: fadeIn 0.8s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            border: 3px solid #ff7e5f;
+            position: relative;
         }
         
         .header {
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
             color: white;
             text-align: center;
-            padding: 30px 20px;
+            padding: 25px 15px;
             position: relative;
-            overflow: hidden;
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-            animation: rotate 10s infinite linear;
-        }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            border-bottom: 3px solid rgba(255, 255, 255, 0.3);
         }
         
         .header h1 {
-            font-size: 28px;
+            font-size: 24px;
             margin-bottom: 8px;
             font-weight: 700;
-            position: relative;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
         
         .header p {
             opacity: 0.95;
             font-size: 16px;
             font-weight: 500;
-            position: relative;
         }
         
         .content {
-            padding: 30px;
+            padding: 20px 15px;
+            background: linear-gradient(135deg, rgba(253, 187, 45, 0.1) 0%, rgba(34, 193, 195, 0.1) 100%);
+        }
+        
+        .section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 240, 240, 0.9) 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
         
         .section-title {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
-            color: #ff7e5f;
-            font-size: 20px;
+            margin-bottom: 15px;
+            color: #ff6b6b;
+            font-size: 18px;
             font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed #ff6b6b;
         }
         
         .section-title i {
-            margin-right: 12px;
-            font-size: 24px;
+            margin-right: 10px;
+            font-size: 20px;
         }
         
         .participant-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
+            gap: 12px;
         }
         
         .participant-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 18px;
-            border-radius: 15px;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            padding: 15px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
         
-        .participant-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+        .participant-card:nth-child(2n) {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
         }
         
-        .participant-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            border-color: #ff7e5f;
+        .participant-card:nth-child(3n) {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        }
+        
+        .participant-card:nth-child(4n) {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
         }
         
         .participant-name {
-            font-weight: 700;
-            font-size: 18px;
-            color: #2c3e50;
-            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            color: #2d3436;
+            margin-bottom: 6px;
         }
         
         .participant-id {
-            font-size: 13px;
-            color: #6c757d;
-            background: white;
+            font-size: 12px;
+            color: #636e72;
+            background: rgba(255, 255, 255, 0.9);
             padding: 4px 10px;
             border-radius: 15px;
             display: inline-block;
@@ -150,69 +134,54 @@
         }
         
         .draw-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 18px;
-            padding: 25px;
-            margin-bottom: 30px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border-radius: 15px;
+            padding: 20px;
             text-align: center;
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .draw-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: shine 4s infinite linear;
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
         
         .winner-display {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            min-height: 150px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 245, 245, 0.9) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 120px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 2;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
         
         .winner-name {
-            font-size: 32px;
-            font-weight: 800;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #6a11cb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .winner-id {
-            font-size: 16px;
-            color: #6c757d;
-            background: #f8f9fa;
-            padding: 6px 15px;
-            border-radius: 20px;
+            font-size: 14px;
+            color: #636e72;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 5px 12px;
+            border-radius: 15px;
             font-weight: 500;
         }
         
         .default-display {
-            color: #6c757d;
+            color: #636e72;
         }
         
         .default-display i {
-            font-size: 40px;
-            margin-bottom: 15px;
-            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #6a11cb;
         }
         
         .default-display p {
@@ -222,44 +191,40 @@
         
         .action-buttons {
             display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
         }
         
         .btn {
-            padding: 16px 30px;
+            padding: 16px;
             border: none;
             border-radius: 50px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
+            transition: all 0.2s ease;
+            display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
-            z-index: 2;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             color: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
         
         .btn-secondary {
-            background: linear-gradient(135deg, #6c757d, #495057);
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
             color: white;
-        }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
         
         .btn:active {
-            transform: translateY(1px);
+            transform: scale(0.98);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         
         .btn i {
@@ -268,42 +233,35 @@
         
         .btn.rolling {
             animation: pulse 1.5s infinite;
-            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
         }
         
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
         
-        .history-section {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-        
         .history-list {
-            max-height: 200px;
+            max-height: 150px;
             overflow-y: auto;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 240, 240, 0.7) 100%);
+            border-radius: 12px;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
         
         .history-item {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 12px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 245, 245, 0.8) 100%);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-        }
-        
-        .history-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-left: 4px solid #ff6b6b;
         }
         
         .history-item:last-child {
@@ -312,56 +270,59 @@
         
         .history-name {
             font-weight: 600;
-            color: #2c3e50;
-            font-size: 16px;
+            color: #2d3436;
+            font-size: 14px;
         }
         
         .history-time {
-            font-size: 14px;
-            color: #6c757d;
-            background: #f8f9fa;
-            padding: 4px 10px;
-            border-radius: 15px;
+            font-size: 12px;
+            color: #636e72;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 500;
         }
         
         .footer {
             text-align: center;
-            padding: 20px;
-            color: #6c757d;
-            font-size: 14px;
-            background: #f8f9fa;
-            border-top: 1px solid #e9ecef;
+            padding: 15px;
+            color: #2d3436;
+            font-size: 12px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(240, 240, 240, 0.2) 100%);
+            border-top: 2px solid #ff6b6b;
+            font-weight: 500;
         }
         
-        /* 响应式设计 */
-        @media (max-width: 600px) {
+        /* 手机横屏适配 */
+        @media (max-height: 500px) and (orientation: landscape) {
             .container {
-                border-radius: 15px;
-            }
-            
-            .header {
-                padding: 25px 15px;
-            }
-            
-            .content {
-                padding: 20px;
+                max-height: 90vh;
+                overflow-y: auto;
             }
             
             .participant-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* 大屏手机适配 */
+        @media (min-width: 400px) and (max-width: 600px) {
+            .header h1 {
+                font-size: 26px;
             }
             
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
+            .participant-name {
+                font-size: 17px;
             }
             
             .winner-name {
                 font-size: 28px;
             }
+        }
+        
+        /* 防止iOS缩放 */
+        input, textarea, select {
+            font-size: 16px !important;
         }
     </style>
 </head>
@@ -373,13 +334,15 @@
         </div>
         
         <div class="content">
-            <div class="section-title">
-                <i class="fas fa-users"></i>
-                <span>参与者列表</span>
-            </div>
-            
-            <div class="participant-grid" id="participantList">
-                <!-- 参与者列表由JS生成 -->
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-users"></i>
+                    <span>参与者列表</span>
+                </div>
+                
+                <div class="participant-grid" id="participantList">
+                    <!-- 参与者列表由JS生成 -->
+                </div>
             </div>
             
             <div class="draw-section">
@@ -398,12 +361,12 @@
                 </div>
             </div>
             
-            <div class="section-title">
-                <i class="fas fa-history"></i>
-                <span>中奖记录</span>
-            </div>
-            
-            <div class="history-section">
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-history"></i>
+                    <span>中奖记录</span>
+                </div>
+                
                 <div class="history-list" id="historyList">
                     <!-- 中奖记录由JS生成 -->
                 </div>
@@ -486,8 +449,8 @@
                 drawBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 抽奖中...';
                 
                 let counter = 0;
-                const maxCycles = 40;
-                const speed = 80;
+                const maxCycles = 30;
+                const speed = 100;
                 const eligibleParticipants = getEligibleParticipants();
                 
                 // 清空显示区域
@@ -525,7 +488,7 @@
                             if (counter >= maxCycles) {
                                 endDraw();
                             }
-                        }, speed + (counter * 8));
+                        }, speed + (counter * 10));
                     }
                 }, speed);
             }
@@ -584,6 +547,16 @@
             
             // 绑定重置按钮事件
             resetBtn.addEventListener('click', resetHistory);
+            
+            // 防止手机端双击缩放
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function (event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
         });
     </script>
 </body>
