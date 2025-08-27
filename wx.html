@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>幸运抽签</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            text-align: center;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 25px 20px;
+            font-size: 24px;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-container {
+            padding: 30px 20px;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .result {
+            font-size: 36px;
+            font-weight: bold;
+            color: #ff7e5f;
+            margin: 20px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+        }
+        
+        .draw-btn {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px 0;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .draw-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(106, 17, 203, 0.4);
+        }
+        
+        .counter {
+            font-size: 16px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+        
+        .history {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+            width: 100%;
+        }
+        
+        .history h3 {
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .history-item {
+            padding: 5px;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        /* 动画效果 */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            幸运抽签
+        </header>
+        
+        <div class="result-container">
+            <div class="counter">第 <span id="count">0</span> 次抽签</div>
+            <div class="result" id="result">点击按钮开始抽签</div>
+            <button class="draw-btn" id="drawBtn">抽取</button>
+            
+            <div class="history">
+                <h3>抽取历史</h3>
+                <div id="historyList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const drawBtn = document.getElementById('drawBtn');
+            const resultElement = document.getElementById('result');
+            const countElement = document.getElementById('count');
+            const historyList = document.getElementById('historyList');
+            
+            // 候选人列表
+            const candidates = ['王学坤', '温家乐', '谢朝阳', '杨红鑫', '徐浩竣'];
+            
+            // 指定顺序
+            const specifiedOrder = [
+                '温家乐', 
+                '杨红鑫', 
+                '王学坤', 
+                '王学坤', 
+                '徐浩竣', 
+                '谢朝阳'
+            ];
+            
+            let drawCount = 0;
+            let history = [];
+            
+            drawBtn.addEventListener('click', function() {
+                // 添加点击动画
+                this.classList.add('pulse');
+                setTimeout(() => {
+                    this.classList.remove('pulse');
+                }, 500);
+                
+                // 执行抽签
+                performDraw();
+            });
+            
+            function performDraw() {
+                drawCount++;
+                countElement.textContent = drawCount;
+                
+                let result;
+                
+                // 前六次按照指定顺序，之后随机
+                if (drawCount <= specifiedOrder.length) {
+                    result = specifiedOrder[drawCount - 1];
+                } else {
+                    // 随机抽取
+                    const randomIndex = Math.floor(Math.random() * candidates.length);
+                    result = candidates[randomIndex];
+                }
+                
+                // 显示结果
+                resultElement.textContent = result;
+                resultElement.classList.remove('fade-in');
+                // 触发重排以重新启动动画
+                void resultElement.offsetWidth;
+                resultElement.classList.add('fade-in');
+                
+                // 添加到历史记录
+                history.unshift(`第${drawCount}次: ${result}`);
+                updateHistory();
+            }
+            
+            function updateHistory() {
+                historyList.innerHTML = '';
+                // 只显示最近8条记录
+                const displayHistory = history.slice(0, 8);
+                
+                displayHistory.forEach(item => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.textContent = item;
+                    historyList.appendChild(historyItem);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
