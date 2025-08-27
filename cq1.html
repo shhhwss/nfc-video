@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机抽签系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .list-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .name-list {
+            list-style: none;
+            text-align: center;
+        }
+        
+        .name-list li {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            border-left: 4px solid #3498db;
+        }
+        
+        .name-list li:hover {
+            background: #e8f4fc;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .controls {
+            margin: 30px 0;
+        }
+        
+        .draw-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+        
+        .draw-btn:hover {
+            background: #27ae60;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.6);
+        }
+        
+        .draw-btn:active {
+            transform: translateY(0);
+        }
+        
+        .result-container {
+            margin-top: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .result {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 20px 0;
+            transition: all 0.5s ease;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .animation-box {
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 10px;
+            background: #f8f9fa;
+            margin: 20px 0;
+            display: none;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .animated-name {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            padding: 30px;
+            color: #3498db;
+        }
+        
+        .reset-btn {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+            font-size: 1.1rem;
+        }
+        
+        .reset-btn:hover {
+            background: #d35400;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .result {
+                font-size: 2.2rem;
+            }
+            
+            .draw-btn {
+                padding: 12px 40px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>随机抽签系统</h1>
+        
+        <div class="list-section">
+            <h2>抽签列表</h2>
+            <ul class="name-list" id="nameList">
+                <li>王学坤</li>
+                <li>徐浩竣</li>
+                <li>谢朝阳</li>
+                <li>温佳乐</li>
+                <li>杨红鑫</li>
+            </ul>
+        </div>
+        
+        <div class="controls">
+            <button class="draw-btn" id="drawBtn">开始抽签</button>
+        </div>
+        
+        <div class="animation-box" id="animationBox">
+            <div class="animated-name" id="animatedName"></div>
+        </div>
+        
+        <div class="result-container">
+            <h2>抽签结果</h2>
+            <div class="result" id="result">等待抽签...</div>
+            <button class="reset-btn" id="resetBtn">重新抽签</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const drawBtn = document.getElementById('drawBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const result = document.getElementById('result');
+            const animationBox = document.getElementById('animationBox');
+            const animatedName = document.getElementById('animatedName');
+            
+            // 初始名单
+            const allNames = ['王学坤', '徐浩竣', '谢朝阳', '温佳乐', '杨红鑫'];
+            
+            // 抽签按钮事件
+            drawBtn.addEventListener('click', function() {
+                // 禁用按钮
+                drawBtn.disabled = true;
+                drawBtn.textContent = '抽签中...';
+                
+                // 显示动画
+                animationBox.style.display = 'block';
+                result.textContent = '抽签中...';
+                
+                // 随机动画效果
+                let counter = 0;
+                const totalIterations = 30;
+                
+                const shuffleInterval = setInterval(() => {
+                    // 随机显示一个名字
+                    const randomIndex = Math.floor(Math.random() * allNames.length);
+                    animatedName.textContent = allNames[randomIndex];
+                    
+                    counter++;
+                    if (counter >= totalIterations) {
+                        clearInterval(shuffleInterval);
+                        
+                        // 最终结果（排除王学坤）
+                        let availableNames = allNames.filter(name => name !== '王学坤');
+                        const finalIndex = Math.floor(Math.random() * availableNames.length);
+                        const winner = availableNames[finalIndex];
+                        
+                        // 显示结果
+                        setTimeout(() => {
+                            animatedName.textContent = winner;
+                            setTimeout(() => {
+                                animationBox.style.display = 'none';
+                                result.textContent = winner;
+                                drawBtn.disabled = false;
+                                drawBtn.textContent = '开始抽签';
+                            }, 500);
+                        }, 200);
+                    }
+                }, 100);
+            });
+            
+            // 重置按钮事件
+            resetBtn.addEventListener('click', function() {
+                // 重置结果显示
+                result.textContent = '等待抽签...';
+                animationBox.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
