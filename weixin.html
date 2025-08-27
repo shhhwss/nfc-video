@@ -4,18 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>微信小程序抽奖系统</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>随机抽签系统</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-family: 'Microsoft YaHei', sans-serif;
         }
-        
+        
         body {
-            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -23,679 +22,372 @@
             padding: 20px;
             color: #333;
         }
-        
+        
         .container {
-            width: 100%;
-            max-width: 500px;
-            background: linear-gradient(135deg, #fdbb2d 0%, #22c1c3 100%);
-            border-radius: 25px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-            overflow: hidden;
-            border: 4px solid #ff7e5f;
-            animation: fadeIn 0.8s ease;
-            position: relative;
-        }
-        
-        .container::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #fdbb2d, #22c1c3);
-            z-index: -1;
-            border-radius: 30px;
-            animation: borderGlow 3s infinite alternate;
-            filter: blur(10px);
-        }
-        
-        @keyframes borderGlow {
-            0% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            color: white;
-            text-align: center;
-            padding: 35px 20px;
-            position: relative;
-            border-bottom: 4px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.5);
-        }
-        
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
-        }
-        
-        .header h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-            font-weight: 800;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-            letter-spacing: 2px;
-            background: linear-gradient(45deg, #fff, #ffd93d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .header p {
-            opacity: 0.95;
-            font-size: 20px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-        }
-        
-        .content {
-            padding: 30px;
-            background: linear-gradient(135deg, rgba(253, 187, 45, 0.1) 0%, rgba(34, 193, 195, 0.1) 100%);
-            backdrop-filter: blur(10px);
-        }
-        
-        .section {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 240, 240, 0.8) 100%);
+            width: 90%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            position: relative;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            text-align: center;
         }
-        
-        .section::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #fdbb2d);
-            border-radius: 23px;
-            z-index: -1;
-            opacity: 0.8;
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2.2rem;
         }
-        
-        .section-title {
+        
+        .description {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .lists-container {
             display: flex;
-            align-items: center;
-            margin-bottom: 25px;
-            color: #ff6b6b;
-            font-size: 24px;
-            font-weight: 700;
-            padding-bottom: 15px;
-            border-bottom: 3px dotted #ff6b6b;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .section-title i {
-            margin-right: 15px;
-            font-size: 28px;
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .participant-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 30px;
             gap: 20px;
         }
-        
-        .participant-card {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        
+        .list-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
             padding: 20px;
-            border-radius: 18px;
-            text-align: center;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .name-list {
+            list-style: none;
+            text-align: left;
+        }
+        
+        .name-list li {
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             transition: all 0.3s ease;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            position: relative;
-            overflow: hidden;
         }
-        
-        .participant-card:nth-child(2n) {
-            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+        
+        .name-list li:hover {
+            background: #e8f4fc;
+            transform: translateX(5px);
         }
-        
-        .participant-card:nth-child(3n) {
-            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        
+        .exclude-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background 0.3s;
         }
-        
-        .participant-card:nth-child(4n) {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        
+        .exclude-btn:hover {
+            background: #c0392b;
         }
-        
-        .participant-card:hover {
-            transform: translateY(-8px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
-            border-color: #ff6b6b;
+        
+        .exclude-btn.excluded {
+            background: #7f8c8d;
         }
-        
-        .participant-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #fdbb2d);
+        
+        .controls {
+            margin: 30px 0;
         }
-        
-        .participant-name {
-            font-weight: 800;
-            font-size: 22px;
-            color: #2d3436;
-            margin-bottom: 10px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        
+        .draw-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
         }
-        
-        .participant-id {
-            font-size: 16px;
-            color: #636e72;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 8px 15px;
-            border-radius: 25px;
-            display: inline-block;
-            font-weight: 700;
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        
+        .draw-btn:hover {
+            background: #27ae60;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.6);
         }
-        
-        .draw-section {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            border-radius: 25px;
-            padding: 35px;
-            text-align: center;
-            box-shadow: 0 15px 30px rgba(106, 17, 203, 0.5);
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            position: relative;
-            overflow: hidden;
+        
+        .draw-btn:active {
+            transform: translateY(0);
         }
-        
-        .draw-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-            animation: shine 4s infinite linear;
-        }
-        
-        .winner-display {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 245, 245, 0.9) 100%);
-            border-radius: 20px;
-            padding: 35px;
-            margin-bottom: 30px;
-            min-height: 180px;
+        
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            min-height: 150px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            border: 3px solid rgba(255, 255, 255, 0.5);
-            position: relative;
-            z-index: 2;
         }
-        
-        .winner-name {
-            font-size: 42px;
-            font-weight: 900;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #6a11cb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
-            letter-spacing: 2px;
+        
+        .result {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 15px 0;
+            transition: all 0.5s ease;
         }
-        
-        .winner-id {
-            font-size: 20px;
-            color: #636e72;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: 700;
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        
-        .default-display {
-            color: #636e72;
-        }
-        
-        .default-display i {
-            font-size: 52px;
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .default-display p {
-            font-size: 20px;
-            font-weight: 700;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 25px;
-            justify-content: center;
-            margin-top: 25px;
-        }
-        
-        .btn {
-            padding: 20px 40px;
-            border: none;
-            border-radius: 50px;
-            font-size: 20px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            position: relative;
-            z-index: 2;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            overflow: hidden;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
+        
+        .animation-box {
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: 0.5s;
+            height: 80px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 10px;
+            background: #f8f9fa;
+            margin: 15px 0;
+            display: none;
         }
-        
-        .btn:hover::before {
-            left: 100%;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            color: white;
-            border: 3px solid rgba(255, 255, 255, 0.5);
-            clip-path: polygon(15% 0, 85% 0, 100% 50%, 85% 100%, 15% 100%, 0 50%);
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
-            color: white;
-            border: 3px solid rgba(255, 255, 255, 0.5);
-            border-radius: 20px 60px 20px 60px;
-        }
-        
-        .btn:hover {
-            transform: translateY(-8px) scale(1.08);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-        }
-        
-        .btn:active {
-            transform: translateY(3px);
-        }
-        
-        .btn i {
-            margin-right: 12px;
-            font-size: 24px;
-        }
-        
-        .btn.rolling {
-            animation: pulse 1.5s infinite;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 10px 25px rgba(106, 17, 203, 0.5); }
-            50% { transform: scale(1.1); box-shadow: 0 18px 35px rgba(106, 17, 203, 0.7); }
-            100% { transform: scale(1); box-shadow: 0 10px 25px rgba(106, 17, 203, 0.5); }
-        }
-        
-        .history-list {
-            max-height: 220px;
-            overflow-y: auto;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 240, 240, 0.7) 100%);
-            border-radius: 18px;
-            padding: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .history-item {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 245, 245, 0.8) 100%);
-            padding: 20px;
-            border-radius: 18px;
-            margin-bottom: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-left: 6px solid #ff6b6b;
-        }
-        
-        .history-item:hover {
-            transform: translateX(10px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            border-left: 6px solid #4ecdc4;
-        }
-        
-        .history-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .history-name {
-            font-weight: 800;
-            color: #2d3436;
-            font-size: 20px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .history-time {
-            font-size: 16px;
-            color: #636e72;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-weight: 700;
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-        }
-        
-        .footer {
+        
+        .animated-name {
+            position: absolute;
+            width: 100%;
             text-align: center;
-            padding: 30px;
-            color: #2d3436;
-            font-size: 18px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(240, 240, 240, 0.2) 100%);
-            border-top: 4px solid #ff6b6b;
-            font-weight: 800;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 20px;
+            color: #3498db;
         }
-        
-        /* 响应式设计 */
-        @media (max-width: 600px) {
-            .container {
-                border-radius: 20px;
-            }
-            
-            .header {
-                padding: 30px 15px;
-            }
-            
-            .header h1 {
-                font-size: 30px;
-            }
-            
-            .content {
-                padding: 20px;
-            }
-            
-            .participant-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .action-buttons {
+        
+        .reset-btn {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+        
+        .reset-btn:hover {
+            background: #d35400;
+        }
+        
+        @media (max-width: 768px) {
+            .lists-container {
                 flex-direction: column;
-                gap: 20px;
             }
-            
-            .btn {
+            
+            .list-section {
                 width: 100%;
-                padding: 18px;
             }
-            
-            .winner-name {
-                font-size: 36px;
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .result {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>微信小程序抽奖系统</h1>
-            <p>公平 • 随机 • 高效</p>
-        </div>
-        
-        <div class="content">
-            <div class="section">
-                <div class="section-title">
-                    <i class="fas fa-users"></i>
-                    <span>参与者列表</span>
-                </div>
-                
-                <div class="participant-grid" id="participantList">
-                    <!-- 参与者列表由JS生成 -->
-                </div>
+        <h1>随机抽签系统</h1>
+        <p class="description">从列表中随机抽取一名人员，可以指定排除"王学坤"或其他人员</p>
+        
+        <div class="lists-container">
+            <div class="list-section">
+                <h2>抽签列表</h2>
+                <ul class="name-list" id="nameList">
+                    <li>王学坤 <button class="exclude-btn" data-name="王学坤">排除</button></li>
+                    <li>徐浩竣 <button class="exclude-btn" data-name="徐浩竣">排除</button></li>
+                    <li>谢朝阳 <button class="exclude-btn" data-name="谢朝阳">排除</button></li>
+                    <li>温佳乐 <button class="exclude-btn" data-name="温佳乐">排除</button></li>
+                    <li>杨红鑫 <button class="exclude-btn" data-name="杨红鑫">排除</button></li>
+                </ul>
             </div>
-            
-            <div class="draw-section">
-                <div class="winner-display default-display" id="winnerDisplay">
-                    <i class="fas fa-gift"></i>
-                    <p>点击抽奖按钮开始抽奖</p>
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-primary" id="drawBtn">
-                        <i class="fas fa-dice"></i> 开始抽奖
-                    </button>
-                    <button class="btn btn-secondary" id="resetBtn">
-                        <i class="fas fa-redo"></i> 重置记录
-                    </button>
-                </div>
-            </div>
-            
-            <div class="section">
-                <div class="section-title">
-                    <i class="fas fa-history"></i>
-                    <span>中奖记录</span>
-                </div>
-                
-                <div class="history-list" id="historyList">
-                    <!-- 中奖记录由JS生成 -->
-                </div>
+            
+            <div class="list-section">
+                <h2>已排除人员</h2>
+                <ul class="name-list" id="excludedList">
+                    <li class="empty">暂无排除人员</li>
+                </ul>
             </div>
         </div>
-        
-        <div class="footer">
-            <p>© 2023 微信小程序抽奖系统 | shhhwss.github.io</p>
+        
+        <div class="controls">
+            <button class="draw-btn" id="drawBtn">开始抽签</button>
+        </div>
+        
+        <div class="animation-box" id="animationBox">
+            <div class="animated-name" id="animatedName"></div>
+        </div>
+        
+        <div class="result-container">
+            <h2>抽签结果</h2>
+            <div class="result" id="result">等待抽签...</div>
+            <button class="reset-btn" id="resetBtn">重新抽签</button>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 指定的参与者数据
-            const participants = [
-                { id: 'WX1001', name: '王学坤' },
-                { id: 'WX1002', name: '温家乐' },
-                { id: 'WX1003', name: '谢朝阳' },
-                { id: 'WX1004', name: '徐浩竣' },
-                { id: 'WX1005', name: '杨红鑫' }
-            ];
-            
-            // 排除的人员（王学坤）
-            const excludedName = "王学坤";
-            
-            const participantList = document.getElementById('participantList');
-            const winnerDisplay = document.getElementById('winnerDisplay');
+            const nameList = document.getElementById('nameList');
+            const excludedList = document.getElementById('excludedList');
             const drawBtn = document.getElementById('drawBtn');
             const resetBtn = document.getElementById('resetBtn');
-            const historyList = document.getElementById('historyList');
-            
-            let isDrawing = false;
-            let drawInterval;
-            let winnersHistory = [];
-            
-            // 渲染参与者列表
-            function renderParticipants() {
-                participantList.innerHTML = '';
-                participants.forEach(participant => {
-                    const card = document.createElement('div');
-                    card.className = 'participant-card';
-                    card.innerHTML = `
-                        <div class="participant-name">${participant.name}</div>
-                        <div class="participant-id">ID: ${participant.id}</div>
-                    `;
-                    participantList.appendChild(card);
+            const result = document.getElementById('result');
+            const animationBox = document.getElementById('animationBox');
+            const animatedName = document.getElementById('animatedName');
+            
+            // 初始名单
+            const allNames = ['王学坤', '徐浩竣', '谢朝阳', '温佳乐', '杨红鑫'];
+            let excludedNames = [];
+            let availableNames = [...allNames];
+            
+            // 排除按钮事件
+            document.querySelectorAll('.exclude-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const name = this.getAttribute('data-name');
+                    const listItem = this.parentElement;
+                    
+                    if (this.classList.contains('excluded')) {
+                        // 取消排除
+                        this.classList.remove('excluded');
+                        this.textContent = '排除';
+                        
+                        // 从排除列表中移除
+                        excludedNames = excludedNames.filter(n => n !== name);
+                        
+                        // 从排除列表中移除项目
+                        const excludedItems = excludedList.querySelectorAll('li');
+                        excludedItems.forEach(item => {
+                            if (item.textContent.includes(name)) {
+                                item.remove();
+                            }
+                        });
+                        
+                        // 如果排除列表为空，显示提示
+                        if (excludedList.children.length === 0) {
+                            const emptyItem = document.createElement('li');
+                            emptyItem.className = 'empty';
+                            emptyItem.textContent = '暂无排除人员';
+                            excludedList.appendChild(emptyItem);
+                        }
+                    } else {
+                        // 添加到排除列表
+                        this.classList.add('excluded');
+                        this.textContent = '取消排除';
+                        
+                        // 添加到排除名单
+                        excludedNames.push(name);
+                        
+                        // 移除排除列表中的空提示
+                        const emptyItem = excludedList.querySelector('.empty');
+                        if (emptyItem) {
+                            emptyItem.remove();
+                        }
+                        
+                        // 添加到排除列表显示
+                        const newItem = document.createElement('li');
+                        newItem.textContent = name;
+                        excludedList.appendChild(newItem);
+                    }
+                    
+                    // 更新可用名单
+                    availableNames = allNames.filter(name => !excludedNames.includes(name));
                 });
-            }
-            
-            // 渲染中奖记录
-            function renderHistory() {
-                historyList.innerHTML = '';
-                if (winnersHistory.length === 0) {
-                    historyList.innerHTML = '<div class="history-item">暂无中奖记录</div>';
+            });
+            
+            // 抽签按钮事件
+            drawBtn.addEventListener('click', function() {
+                if (availableNames.length === 0) {
+                    result.textContent = '没有可抽签的人员！';
                     return;
                 }
-                
-                winnersHistory.slice().reverse().forEach(record => {
-                    const item = document.createElement('div');
-                    item.className = 'history-item';
-                    item.innerHTML = `
-                        <div class="history-name">${record.name}</div>
-                        <div class="history-time">${record.time}</div>
-                    `;
-                    historyList.appendChild(item);
-                });
-            }
-            
-            // 获取可参与抽奖的人员（排除王学坤）
-            function getEligibleParticipants() {
-                return participants.filter(p => p.name !== excludedName);
-            }
-            
-            // 开始抽奖
-            function startDraw() {
-                if (isDrawing) return;
-                
-                isDrawing = true;
-                drawBtn.classList.add('rolling');
-                drawBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 抽奖中...';
-                
+                
+                // 禁用按钮
+                drawBtn.disabled = true;
+                drawBtn.textContent = '抽签中...';
+                
+                // 显示动画
+                animationBox.style.display = 'block';
+                result.textContent = '抽签中...';
+                
+                // 随机动画效果
                 let counter = 0;
-                const maxCycles = 40;
-                const speed = 80;
-                const eligibleParticipants = getEligibleParticipants();
-                
-                // 清空显示区域
-                winnerDisplay.className = 'winner-display';
-                winnerDisplay.innerHTML = '';
-                
-                drawInterval = setInterval(() => {
-                    // 随机选择一个参与者（包含所有人，包括王学坤）
-                    const randomIndex = Math.floor(Math.random() * participants.length);
-                    const participant = participants[randomIndex];
-                    
-                    // 显示随机选中的参与者
-                    winnerDisplay.innerHTML = `
-                        <div class="winner-name">${participant.name}</div>
-                        <div class="winner-id">ID: ${participant.id}</div>
-                    `;
-                    
+                const totalIterations = 30;
+                const namesCopy = [...availableNames];
+                
+                const shuffleInterval = setInterval(() => {
+                    // 随机显示一个名字
+                    const randomIndex = Math.floor(Math.random() * namesCopy.length);
+                    animatedName.textContent = namesCopy[randomIndex];
+                    
                     counter++;
-                    
-                    // 逐渐减慢速度
-                    if (counter > maxCycles / 2) {
-                        clearInterval(drawInterval);
-                        drawInterval = setInterval(() => {
-                            // 动画阶段仍然包含所有人
-                            const randomIndex = Math.floor(Math.random() * participants.length);
-                            const participant = participants[randomIndex];
-                            
-                            winnerDisplay.innerHTML = `
-                                <div class="winner-name">${participant.name}</div>
-                                <div class="winner-id">ID: ${participant.id}</div>
-                            `;
-                            
-                            counter++;
-                            
-                            if (counter >= maxCycles) {
-                                endDraw();
-                            }
-                        }, speed + (counter * 8));
+                    if (counter >= totalIterations) {
+                        clearInterval(shuffleInterval);
+                        
+                        // 最终结果
+                        const finalIndex = Math.floor(Math.random() * availableNames.length);
+                        const winner = availableNames[finalIndex];
+                        
+                        // 显示结果
+                        setTimeout(() => {
+                            animatedName.textContent = winner;
+                            setTimeout(() => {
+                                animationBox.style.display = 'none';
+                                result.textContent = winner;
+                                drawBtn.disabled = false;
+                                drawBtn.textContent = '开始抽签';
+                            }, 500);
+                        }, 200);
                     }
-                }, speed);
-            }
-            
-            // 结束抽奖
-            function endDraw() {
-                clearInterval(drawInterval);
-                
-                const eligibleParticipants = getEligibleParticipants();
-                
-                // 随机选择最终中奖者（从可参与抽奖的人员中选择，排除王学坤）
-                const winnerIndex = Math.floor(Math.random() * eligibleParticipants.length);
-                const winner = eligibleParticipants[winnerIndex];
-                
-                // 显示最终中奖者
-                winnerDisplay.innerHTML = `
-                    <div class="winner-name">${winner.name}</div>
-                    <div class="winner-id">ID: ${winner.id}</div>
-                `;
-                
-                // 添加到历史记录
-                const now = new Date();
-                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-                
-                winnersHistory.push({
-                    name: winner.name,
-                    time: timeString
+                }, 100);
+            });
+            
+            // 重置按钮事件
+            resetBtn.addEventListener('click', function() {
+                // 重置排除状态
+                excludedNames = [];
+                availableNames = [...allNames];
+                
+                // 重置按钮状态
+                document.querySelectorAll('.exclude-btn').forEach(btn => {
+                    btn.classList.remove('excluded');
+                    btn.textContent = '排除';
                 });
-                
-                // 更新按钮状态
-                drawBtn.classList.remove('rolling');
-                drawBtn.innerHTML = '<i class="fas fa-dice"></i> 开始抽奖';
-                isDrawing = false;
-                
-                // 更新历史记录显示
-                renderHistory();
-            }
-            
-            // 重置记录
-            function resetHistory() {
-                winnersHistory = [];
-                winnerDisplay.className = 'winner-display default-display';
-                winnerDisplay.innerHTML = `
-                    <i class="fas fa-gift"></i>
-                    <p>点击抽奖按钮开始抽奖</p>
-                `;
-                renderHistory();
-            }
-            
-            // 初始化
-            renderParticipants();
-            renderHistory();
-            
-            // 绑定抽奖按钮事件
-            drawBtn.addEventListener('click', startDraw);
-            
-            // 绑定重置按钮事件
-            resetBtn.addEventListener('click', resetHistory);
+                
+                // 清空排除列表
+                excludedList.innerHTML = '';
+                const emptyItem = document.createElement('li');
+                emptyItem.className = 'empty';
+                emptyItem.textContent = '暂无排除人员';
+                excludedList.appendChild(emptyItem);
+                
+                // 重置结果显示
+                result.textContent = '等待抽签...';
+                animationBox.style.display = 'none';
+            });
         });
     </script>
 </body>
