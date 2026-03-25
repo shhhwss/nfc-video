@@ -1,12 +1,676 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>我的第一个网页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生管理系统</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <style>
+        body { font-family: "Microsoft YaHei"; padding: 10px; background: #fff; margin:0; }
+
+        /* ========== 整体绿色调更浅 ========== */
+        .box1 { background: #66BB6A; border-radius: 4px; }
+        .box2 { background: #F1F8E9; border-radius: 4px; }
+        .box3 { background: #ffffff; border-radius: 4px; }
+        .box4 { background: #ffffff; border-radius: 4px; }
+        .table-box { background: #fff; border-radius: 4px; }
+
+        .header {
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            color:#fff;
+        }
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #66BB6A;
+        }
+        .title-box {
+            padding: 8px 22px;
+            margin-left: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .user-box {
+            padding: 6px 16px;
+            margin-right: 10px;
+            font-weight: 500;
+            color:#222;
+        }
+
+        .main {
+            display: flex;
+            gap: 12px;
+            height: calc(100vh - 140px);
+        }
+        .sidebar {
+            width: 200px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* ========== 侧边栏最终正确样式 ========== */
+        .menu-item {
+            padding: 10px;
+            text-align: center;
+            font-weight: 500;
+            background: #F1F8E9;
+            cursor: pointer;
+            border-radius:4px;
+            border: none;
+        }
+        /* 悬浮变色 */
+        .menu-item:hover {
+            background: #DCEDC8 !important;
+        }
+        /* 点击选中才变色 */
+        .menu-item.active {
+            background: #C8E6C9 !important;
+            font-weight: 500;
+        }
+
+        /* 课程下拉按钮 完全和其他菜单统一 + 文字居中对齐 */
+        .accordion-button {
+            padding: 10px !important;
+            text-align: center !important;
+            font-weight: 500 !important;
+            background: #F1F8E9 !important;
+            cursor: pointer !important;
+            border-radius:4px !important;
+            border: none !important;
+            color:#222 !important;
+            box-shadow: none !important;
+            /* 关键：让图标不影响文字居中 */
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            position: relative !important;
+        }
+        /* 把下拉箭头移到右侧，不影响文字 */
+        .accordion-button::after {
+            position: absolute !important;
+            right: 15px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            margin-left: 0 !important;
+        }
+        .accordion-button:hover {
+            background: #DCEDC8 !important;
+        }
+        .accordion-button:not(.collapsed) {
+            background: #F1F8E9 !important;
+            color:#222 !important;
+        }
+        .accordion-item {
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .content { flex: 1; padding: 10px; }
+        .btn-primary { background: #66BB6A; border-color: #66BB6A; }
+        .bg-primary { background-color: #66BB6A !important; }
+
+        .page-title {
+            font-size: 24px; font-weight: bold; color: #333;
+            margin-bottom: 20px; text-align: left;
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+        .pagination { justify-content:center; margin-top:15px; }
+        .chart-box { height:350px; margin-bottom:20px; }
+    </style>
 </head>
 <body>
-    <h1>Hello, GitHub Pages!</h1>
-    <p>这是我用 GitHub Pages 搭建的网页。</p>
+
+<!-- 顶部 -->
+<div class="header box1">
+    <div class="d-flex align-items-center">
+        <div class="logo box2">
+            <i class="fa fa-graduation-cap fa-lg"></i>
+        </div>
+        <div class="title-box">学生管理系统</div>
+    </div>
+    <div>
+        <span class="user-box box4">管理员</span>
+        <button class="btn btn-danger" id="logout">退出登录</button>
+    </div>
+</div>
+
+<!-- 主体 -->
+<div class="main">
+    <!-- 侧边栏：全部统一 + 图标齐全 + 点击才变色 + 课程文字完全对齐 -->
+    <div class="sidebar box2">
+        <div class="menu-item active" data-page="student">
+            <i class="fa fa-user-graduate me-1"></i>学生管理
+        </div>
+        <div class="menu-item" data-page="stat">
+            <i class="fa fa-bar-chart me-1"></i>数据统计
+        </div>
+
+        <!-- 课程下拉：文字完全居中，箭头移到右侧 -->
+        <div class="accordion">
+            <div class="accordion-item">
+                <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#courseCollapse">
+                    <i class="fa fa-book me-2"></i>课程管理
+                </button>
+                <div class="accordion-collapse collapse" id="courseCollapse">
+                    <div class="accordion-body p-0 pt-2">
+                        <div class="menu-item" data-page="courseList">
+                            <i class="fa fa-list me-1"></i>课程列表
+                        </div>
+                        <div class="menu-item" data-page="courseScore">
+                            <i class="fa fa-star-half-alt me-1"></i>成绩管理
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 班级管理：图标已补上 -->
+        <div class="menu-item mt-2" data-page="class">
+            <i class="fa fa-users me-1"></i>班级管理
+        </div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content box3">
+        <!-- 学生管理 -->
+        <div class="page active" id="page-student">
+            <div class="page-title">学生列表管理</div>
+            <div class="table-box p-4">
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <button class="btn btn-primary" id="addStu"><i class="fa fa-plus"></i> 添加学生</button>
+                    <button class="btn btn-danger" id="batchDelStu"><i class="fa fa-trash"></i> 批量删除</button>
+                    <button class="btn btn-success" id="importStu"><i class="fa fa-upload"></i> 导入学生</button>
+                    <div class="dropdown">
+                        <button class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown">导出学生</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" id="exportCheckStu">导出选中</a></li>
+                            <li><a class="dropdown-item" id="exportAllStu">导出全部</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <table class="table table-bordered text-center align-middle">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th><input type="checkbox" id="checkAllStu"></th>
+                            <th>学号</th><th>姓名</th><th>性别</th><th>年龄</th><th>班级</th><th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stuBody"></tbody>
+                </table>
+                <ul class="pagination" id="stuPage"></ul>
+            </div>
+        </div>
+
+        <!-- 数据统计 -->
+        <div class="page" id="page-stat">
+            <div class="page-title">数据统计</div>
+            <div class="row">
+                <div class="col-md-6"><div class="chart-box card p-3" id="pieChart"></div></div>
+                <div class="col-md-6"><div class="chart-box card p-3" id="barChart"></div></div>
+            </div>
+            <div class="row mt-3 text-center">
+                <div class="col-md-4"><div class="p-4 bg-success bg-opacity-10 rounded"><h3 id="totalStu">0</h3><p>总学生</p></div></div>
+                <div class="col-md-4"><div class="p-4 bg-primary bg-opacity-10 rounded"><h3 id="totalClass">0</h3><p>总班级</p></div></div>
+                <div class="col-md-4"><div class="p-4 bg-warning bg-opacity-10 rounded"><h3 id="totalCourse">0</h3><p>总课程</p></div></div>
+            </div>
+        </div>
+
+        <!-- 课程列表 -->
+        <div class="page" id="page-courseList">
+            <div class="page-title">课程列表</div>
+            <div class="table-box p-4">
+                <button class="btn btn-primary mb-3" id="addCourse"><i class="fa fa-plus"></i> 添加课程</button>
+                <table class="table table-bordered text-center">
+                    <thead class="bg-primary text-white"><tr><th>ID</th><th>课程名称</th><th>授课老师</th><th>操作</th></tr></thead>
+                    <tbody id="courseBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 成绩管理 -->
+        <div class="page" id="page-courseScore">
+            <div class="page-title">成绩管理</div>
+            <div class="table-box p-4">
+                <table class="table table-bordered text-center">
+                    <thead class="bg-primary text-white"><tr><th>学生</th><th>课程</th><th>成绩</th><th>操作</th></tr></thead>
+                    <tbody id="scoreBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 班级管理 -->
+        <div class="page" id="page-class">
+            <div class="page-title">班级管理</div>
+            <div class="table-box p-4">
+                <button class="btn btn-primary mb-3" id="addClass"><i class="fa fa-plus"></i> 添加班级</button>
+                <table class="table table-bordered text-center">
+                    <thead class="bg-primary text-white"><tr><th>班级编号</th><th>班级名称</th><th>人数</th><th>操作</th></tr></thead>
+                    <tbody id="classBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 弹窗 -->
+<div class="modal fade" id="stuModal">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header box1 text-white"><h5>学生信息</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body box2">
+            <input type="hidden" id="stuId">
+            <div class="mb-3"><input class="form-control" id="stuNo" placeholder="学号"></div>
+            <div class="mb-3"><input class="form-control" id="stuName" placeholder="姓名"></div>
+            <div class="mb-3"><select class="form-select" id="stuGender"><option>男</option><option>女</option></select></div>
+            <div class="mb-3"><input class="form-control" id="stuAge" placeholder="年龄"></div>
+            <!-- 修改：把输入框改成下拉选择框 -->
+            <div class="mb-3">
+                <label class="form-label">班级</label>
+                <select class="form-select" id="stuClassSelect">
+                    <option value="">请选择班级</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button class="btn btn-primary" id="saveStu">保存</button>
+        </div>
+    </div></div>
+</div>
+
+<div class="modal fade" id="classModal">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header box1 text-white"><h5>班级信息</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <input type="hidden" id="classId">
+            <div class="mb-3"><input class="form-control" id="className" placeholder="班级名称"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button class="btn btn-primary" id="saveClass">保存</button>
+        </div>
+    </div></div>
+</div>
+
+<div class="modal fade" id="courseModal">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header box1 text-white"><h5>课程信息</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <input type="hidden" id="courseId">
+            <div class="mb-3"><input class="form-control" id="courseName" placeholder="课程名称"></div>
+            <div class="mb-3"><input class="form-control" id="courseTeacher" placeholder="授课老师"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button class="btn btn-primary" id="saveCourse">保存</button>
+        </div>
+    </div></div>
+</div>
+
+<input type="file" id="importFile" style="display:none">
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+$(function(){
+    // 菜单切换
+    $(".menu-item").click(function(){
+        $(".menu-item").removeClass("active");
+        $(this).addClass("active");
+        let page = $(this).data("page");
+        $(".page").removeClass("active");
+        $(`#page-${page}`).addClass("active");
+        if(page=="stat") { refreshStats(); initCharts(); }
+    });
+
+    // 学生数据
+    let stuList = [
+        {id:1,no:"2026001",name:"张三",gender:"男",age:18,class:"计算机1班"},
+        {id:2,no:"2026002",name:"李四",gender:"女",age:19,class:"软件2班"},
+        {id:3,no:"2026003",name:"王五",gender:"男",age:18,class:"大数据1班"},
+        {id:4,no:"2026004",name:"赵六",gender:"女",age:19,class:"人工智能班"}
+    ];
+    let pageSize = 3, currentPage = 1;
+
+    // 班级数据
+    let classList = [
+        {id:1,name:"计算机1班"},
+        {id:2,name:"软件2班"},
+        {id:3,name:"大数据1班"},
+        {id:4,name:"人工智能班"}
+    ];
+
+    // 课程数据
+    let courseList = [
+        {id:1,name:"语文",teacher:"王老师"},
+        {id:2,name:"数学",teacher:"李老师"},
+        {id:3,name:"英语",teacher:"张老师"}
+    ];
+
+    // 成绩数据
+    let scoreList = [
+        {stu:"张三",course:"语文",score:92},
+        {stu:"李四",course:"数学",score:98},
+        {stu:"王五",course:"英语",score:85}
+    ];
+
+    // ======================================
+    // 核心功能：更新班级下拉选择框选项
+    // ======================================
+    function updateClassSelect() {
+        let $select = $("#stuClassSelect");
+        $select.empty().append('<option value="">请选择班级</option>');
+        classList.forEach(item => {
+            $select.append(`<option value="${item.name}">${item.name}</option>`);
+        });
+    }
+
+    // ======================================
+    // 学生管理（增删改查 + 分页）
+    // ======================================
+    function renderStu(){
+        let start = (currentPage-1)*pageSize;
+        let list = stuList.slice(start, start+pageSize);
+        let html = "";
+        list.forEach(item=>{
+            html+=`<tr>
+                <td><input type="checkbox" class="checkStu" data-id="${item.id}"></td>
+                <td>${item.no}</td>
+                <td>${item.name}</td>
+                <td>${item.gender}</td>
+                <td>${item.age}</td>
+                <td>${item.class}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary editStu" data-id="${item.id}">编辑</button>
+                    <button class="btn btn-sm btn-danger delStu" data-id="${item.id}">删除</button>
+                </td>
+            </tr>`;
+        });
+        $("#stuBody").html(html);
+        renderPage(Math.ceil(stuList.length/pageSize));
+    }
+
+    // 分页
+    function renderPage(total){
+        let html = "";
+        for(let i=1;i<=total;i++){
+            html+=`<li class="page-item ${i==currentPage?'active':''}">
+                    <a class="page-link page-btn" data-page="${i}" href="#">${i}</a>
+                   </li>`;
+        }
+        $("#stuPage").html(html);
+    }
+
+    $(document).on("click",".page-btn",function(e){
+        e.preventDefault();
+        currentPage = parseInt($(this).data("page"));
+        renderStu();
+    });
+
+    // 添加学生
+    $("#addStu").click(()=>{
+        $("#stuModal input").val("");
+        // 打开弹窗前更新班级下拉选项
+        updateClassSelect();
+        new bootstrap.Modal("#stuModal").show();
+    });
+
+    // 保存学生（新增+编辑）
+    $("#saveStu").click(()=>{
+        let id = $("#stuId").val();
+        // 获取选中的班级
+        let className = $("#stuClassSelect").val();
+        if(!className) {
+            alert("请选择班级！");
+            return;
+        }
+        let obj = {
+            id: id || Math.max(...stuList.map(x=>x.id),0)+1,
+            no: $("#stuNo").val(),
+            name: $("#stuName").val(),
+            gender: $("#stuGender").val(),
+            age: $("#stuAge").val(),
+            class: className
+        };
+        if(id){
+            let idx = stuList.findIndex(x=>x.id==id);
+            if(idx>-1) stuList[idx] = obj;
+        }else{
+            stuList.push(obj);
+        }
+        bootstrap.Modal.getInstance("#stuModal").hide();
+        renderStu();
+        renderClass();
+        refreshStats();
+    });
+
+    // 编辑学生
+    $(document).on("click",".editStu",function(){
+        let id = $(this).data("id");
+        let item = stuList.find(x=>x.id==id);
+        // 更新班级下拉选项并选中当前班级
+        updateClassSelect();
+        $("#stuId").val(item.id);
+        $("#stuNo").val(item.no);
+        $("#stuName").val(item.name);
+        $("#stuGender").val(item.gender);
+        $("#stuAge").val(item.age);
+        $("#stuClassSelect").val(item.class);
+        new bootstrap.Modal("#stuModal").show();
+    });
+
+    // 删除学生
+    $(document).on("click",".delStu",function(){
+        let id = $(this).data("id");
+        stuList = stuList.filter(x=>x.id!=id);
+        renderStu();
+        renderClass();
+        refreshStats();
+    });
+
+    // ======================================
+    // 班级管理（增删改 + 自动统计人数）
+    // ======================================
+    function renderClass(){
+        let html="";
+        classList.forEach(item=>{
+            let cnt = stuList.filter(s=>s.class==item.name).length;
+            html+=`<tr>
+                <td>${item.id}</td>
+                <td>${item.name}</td>
+                <td>${cnt}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary editClass" data-id="${item.id}">编辑</button>
+                    <button class="btn btn-sm btn-danger delClass" data-id="${item.id}">删除</button>
+                </td>
+            </tr>`;
+        });
+        $("#classBody").html(html);
+    }
+
+    // 添加班级
+    $("#addClass").click(()=>{
+        $("#classModal input").val("");
+        new bootstrap.Modal("#classModal").show();
+    });
+
+    // 保存班级
+    $("#saveClass").click(()=>{
+        let id = $("#classId").val();
+        let obj = {
+            id: id || Math.max(...classList.map(x=>x.id),0)+1,
+            name: $("#className").val()
+        };
+        if(id){
+            let idx = classList.findIndex(x=>x.id==id);
+            if(idx>-1) classList[idx] = obj;
+        }else{
+            classList.push(obj);
+        }
+        bootstrap.Modal.getInstance("#classModal").hide();
+        renderClass();
+        refreshStats();
+    });
+
+    // 编辑班级
+    $(document).on("click",".editClass",function(){
+        let id = $(this).data("id");
+        let item = classList.find(x=>x.id==id);
+        $("#classId").val(item.id);
+        $("#className").val(item.name);
+        new bootstrap.Modal("#classModal").show();
+    });
+
+    // 删除班级
+    $(document).on("click",".delClass",function(){
+        let id = $(this).data("id");
+        let className = classList.find(x=>x.id==id).name;
+        // 检查该班级是否有学生
+        let hasStudent = stuList.some(s=>s.class==className);
+        if(hasStudent) {
+            alert("该班级下还有学生，无法删除！");
+            return;
+        }
+        classList = classList.filter(x=>x.id!=id);
+        renderClass();
+        refreshStats();
+    });
+
+    // ======================================
+    // 课程管理（增删改）
+    // ======================================
+    function renderCourse(){
+        let html="";
+        courseList.forEach(item=>{
+            html+=`<tr>
+                <td>${item.id}</td>
+                <td>${item.name}</td>
+                <td>${item.teacher}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary editCourse" data-id="${item.id}">编辑</button>
+                    <button class="btn btn-sm btn-danger delCourse" data-id="${item.id}">删除</button>
+                </td>
+            </tr>`;
+        });
+        $("#courseBody").html(html);
+    }
+
+    // 添加课程
+    $("#addCourse").click(()=>{
+        $("#courseModal input").val("");
+        new bootstrap.Modal("#courseModal").show();
+    });
+
+    // 保存课程
+    $("#saveCourse").click(()=>{
+        let id = $("#courseId").val();
+        let obj = {
+            id: id || Math.max(...courseList.map(x=>x.id),0)+1,
+            name: $("#courseName").val(),
+            teacher: $("#courseTeacher").val()
+        };
+        if(id){
+            let idx = courseList.findIndex(x=>x.id==id);
+            if(idx>-1) courseList[idx] = obj;
+        }else{
+            courseList.push(obj);
+        }
+        bootstrap.Modal.getInstance("#courseModal").hide();
+        renderCourse();
+        refreshStats();
+    });
+
+    // 编辑课程
+    $(document).on("click",".editCourse",function(){
+        let id = $(this).data("id");
+        let item = courseList.find(x=>x.id==id);
+        $("#courseId").val(item.id);
+        $("#courseName").val(item.name);
+        $("#courseTeacher").val(item.teacher);
+        new bootstrap.Modal("#courseModal").show();
+    });
+
+    // 删除课程
+    $(document).on("click",".delCourse",function(){
+        let id = $(this).data("id");
+        courseList = courseList.filter(x=>x.id!=id);
+        renderCourse();
+        refreshStats();
+    });
+
+    // ======================================
+    // 成绩渲染
+    // ======================================
+    function renderScore(){
+        let html="";
+        scoreList.forEach(item=>{
+            html+=`<tr>
+                <td>${item.stu}</td>
+                <td>${item.course}</td>
+                <td>${item.score}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary">编辑</button>
+                </td>
+            </tr>`;
+        });
+        $("#scoreBody").html(html);
+    }
+
+    // ======================================
+    // 数据统计 + 图表
+    // ======================================
+    function refreshStats(){
+        $("#totalStu").text(stuList.length);
+        $("#totalClass").text(classList.length);
+        $("#totalCourse").text(courseList.length);
+    }
+
+    let pieChart, barChart;
+    function initCharts(){
+        if(!pieChart) pieChart = echarts.init(document.getElementById('pieChart'));
+        if(!barChart) barChart = echarts.init(document.getElementById('barChart'));
+        let pieData = [], barData = [], xData=[];
+        classList.forEach(c=>{
+            let num = stuList.filter(s=>s.class==c.name).length;
+            pieData.push({value:num,name:c.name});
+            barData.push(num);
+            xData.push(c.name);
+        });
+        pieChart.setOption({
+            title:{text:'班级学生占比'},
+            series:[{type:'pie',data:pieData}]
+        });
+        barChart.setOption({
+            title:{text:'各班级人数统计'},
+            xAxis:{data:xData},
+            yAxis:{type:'value'},
+            series:[{type:'bar',data:barData,itemStyle:{color:'#66BB6A'}}]
+        });
+    }
+
+    // 初始化
+    renderStu();
+    renderClass();
+    renderCourse();
+    renderScore();
+    refreshStats();
+});
+</script>
 </body>
 </html>
